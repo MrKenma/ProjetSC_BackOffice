@@ -2,7 +2,7 @@ import React from 'react';
 
 function NavigationBar() {
     return (
-        <div>
+        <div className="NavigationBar">
             <div className="bg-info">
                 <p className="text-white text-4xl pb-1">BeSafe</p>
             </div>
