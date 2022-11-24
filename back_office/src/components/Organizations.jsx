@@ -1,23 +1,24 @@
 import React from 'react';
 import AddButton from "./AddButton";
 
-function Organizations() {
-    return (
-        <div className="flex">
-            <div className="flex-none w-28 bg-base-content">
-                <AddButton />
-            </div>
-            <div className="flex-auto overflow-x-auto">
-                <table className="table w-full">
-                    <thead>
+class Organizations extends React.Component {
+    render() {
+        return (
+            <div className="flex">
+                <div className="flex-none w-28 bg-base-content">
+                    <AddButton />
+                </div>
+                <div className="flex-auto overflow-x-auto">
+                    <table className="table w-full">
+                        <thead>
                         <tr>
                             <th></th>
                             <th>Name</th>
                             <th>Responsible</th>
                             <th>Number of events organized</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr>
                             <th>1</th>
                             <td>AGL</td>
@@ -36,11 +37,12 @@ function Organizations() {
                             <td>Hannah Priem</td>
                             <td>0</td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
 export default Organizations;

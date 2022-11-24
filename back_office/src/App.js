@@ -1,14 +1,11 @@
 import React from "react";
-import Welcome from './components/Welcome';
-import NavBar from './components/NavigationBar';
-import Organizations from "./components/Organizations";
+import Router from "./routes/Router";
 import './App.css';
 
 function App() {
   return (
     <div className="App h-screen">
-        <NavBar />
-        <Organizations />
+        <Router />
     </div>
   );
 }
