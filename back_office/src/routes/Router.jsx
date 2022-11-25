@@ -6,6 +6,7 @@ import Welcome from "../components/Welcome";
 import Organizations from "../components/Organizations";
 import Events from "../components/Events";
 import Partiers from "../components/Partiers";
+import Login from "../components/Login";
 
 export default function Router() {
     return (
@@ -16,6 +17,7 @@ export default function Router() {
                 <Route path="/organizations" element={<Organizations />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/partiers" element={<Partiers />} />
+                <Route path="/login" element={<Login/>}/>
             </Routes>
         </BrowserRouter>
     )
