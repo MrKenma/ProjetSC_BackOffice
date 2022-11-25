@@ -17,7 +17,7 @@ function NavigationBar() {
                     </ul>
                 </div>
                 <div className="navbar-end">
-                    <a className="btn">Log in</a>
+                    <a class="btn" href="/login">Log in</a>
                 </div>
             </div>
         </div>
