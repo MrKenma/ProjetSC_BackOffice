@@ -1,13 +1,15 @@
 import React from 'react';
 import AddButton from "../components/AddButton";
+import FilterBox from "./FilterBox";
 
 const Organization = (props) => {
     const organizations = props.organizations;
 
     return (
         <div className="flex">
-            <div className="flex-none w-28 bg-base-content">
+            <div className="flex-none w-48 bg-base-content">
                 <AddButton />
+                <FilterBox />
             </div>
             <div className="flex-auto overflow-x-auto">
                 <table className="table w-full">
@@ -26,7 +28,7 @@ const Organization = (props) => {
                                 <td>{organization.name}</td>
                                 <td>{organization.responsiblename}</td>
                             </tr>
-                        )
+                        );
                     })}
                     </tbody>
                 </table>

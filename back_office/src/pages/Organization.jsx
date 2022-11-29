@@ -24,18 +24,16 @@ class Organization extends React.Component {
                 const organizations = await getOrganizations();
                 this.setState({
                     loaded: true,
-                    loading: false
+                    loading: false,
+                    organizations: organizations
                 });
-                for (let organization of organizations) {
-                    this.state.organizations.push(organization)
-                }
             } catch (error) {
                 this.setState({
                     error: true,
                     loading: false,
                     loaded: true,
                     errorMessage: error.message
-                })
+                });
             }
         });
     }

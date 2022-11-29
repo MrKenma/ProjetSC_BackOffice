@@ -26,4 +26,14 @@ export async function getOrganizations() {
     }
 }
 
+export async function getOrganizationsResponsibles() {
+    try {
+        const res = await axios.get('organization/responsibles');
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+}
+
 // toutes les requêtes vers l'API
