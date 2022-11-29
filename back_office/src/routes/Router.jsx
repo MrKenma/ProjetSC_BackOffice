@@ -3,7 +3,7 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 
 import NavigationBar from "../components/NavigationBar";
 import Welcome from "../components/Welcome";
-import Organization from "../components/Organization";
+import Organization from "../pages/Organization";
 import Event from "../components/Event";
 import Partiers from "../components/Partiers";
 import Login from "../components/Login";

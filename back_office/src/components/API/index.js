@@ -19,7 +19,6 @@ export async function getOrganization() {
 export async function getOrganizations() {
     try {
         const res = await axios.get('organization');
-        console.log(res.data);
         return res.data;
     } catch (error) {
         console.log(error);
