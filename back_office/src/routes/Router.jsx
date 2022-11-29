@@ -3,8 +3,8 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 
 import NavigationBar from "../components/NavigationBar";
 import Welcome from "../components/Welcome";
-import Organizations from "../components/Organizations";
-import Events from "../components/Events";
+import Organization from "../components/Organization";
+import Event from "../components/Event";
 import Partiers from "../components/Partiers";
 import Login from "../components/Login";
 
@@ -14,9 +14,9 @@ export default function Router() {
             <NavigationBar />
             <Routes>
                 <Route path="/" element={<Welcome />} />
-                <Route path="/organizations" element={<Organizations />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/partiers" element={<Partiers />} />
+                <Route path="/organization" element={<Organization />} />
+                <Route path="/event" element={<Event />} />
+                <Route path="/partier" element={<Partiers />} />
                 <Route path="/login" element={<Login/>}/>
             </Routes>
         </BrowserRouter>
