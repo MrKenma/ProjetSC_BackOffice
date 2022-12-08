@@ -11,9 +11,9 @@ function NavigationBar() {
                 <div className="navbar-start">
                     <ul className="menu menu-horizontal p-0">
                         <li><Link to="/">Home</Link></li>
-                        <li><Link to="/organization">Organizations</Link></li>
-                        <li><Link to="/event">Events</Link></li>
-                        <li><Link to="/partier">Users</Link></li>
+                        <li><Link to="/organizations">Organizations</Link></li>
+                        <li><Link to="/events">Events</Link></li>
+                        <li><Link to="/partiers">Users</Link></li>
                     </ul>
                 </div>
                 <div className="navbar-end">

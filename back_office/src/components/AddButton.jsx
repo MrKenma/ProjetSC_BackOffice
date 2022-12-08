@@ -1,10 +1,15 @@
 import React from 'react';
-import AddImg from '../images/addImg.jpg';
+import AddImg from '../images/addImg.png';
+import {Link} from 'react-router-dom';
 
 function AddButton() {
     return (
         <div className="w-full mt-12">
-            <img className="w-2/3 mx-auto mt-2" src={AddImg} alt="Ajouter"/>
+            <div className="avatar">
+                <div className="w-36 rounded-full">
+                    <Link to="/organizationForm"><img src={AddImg} alt="Add"/></Link>
+                </div>
+            </div>
         </div>
     );
 }
