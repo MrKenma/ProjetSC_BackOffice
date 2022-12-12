@@ -1,5 +1,5 @@
 import React from 'react';
-import OrganizationPanel from "../components/OrganizationsTab";
+import OrganizationsTab from "../components/OrganizationsTab";
 import {getOrganizations} from "../components/API";
 import AddButton from "../components/AddButton";
 import FilterBox from "../components/FilterBox";
@@ -52,12 +52,13 @@ class Organizations extends React.Component {
 
     render() {
         let Content;
+
         if (this.state.loading) {
             Content = <p>Chargement en cours</p>
         } else if (this.state.error) {
             Content = <p>{this.state.errorMessage}</p>
         } else if (this.state.organizations[0].id) {
-            Content = <OrganizationPanel
+            Content = <OrganizationsTab
                 organizations={this.state.organizationsToShow}
             />
         }

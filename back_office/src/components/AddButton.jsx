@@ -7,7 +7,7 @@ function AddButton() {
         <div className="w-full mt-12">
             <div className="avatar">
                 <div className="w-36 rounded-full">
-                    <Link to="/organizationForm"><img src={AddImg} alt="Add"/></Link>
+                    <Link to="/organizationForm/0"><img src={AddImg} alt="Add"/></Link>
                 </div>
             </div>
         </div>

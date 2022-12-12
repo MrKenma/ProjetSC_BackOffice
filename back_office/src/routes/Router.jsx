@@ -17,7 +17,7 @@ export default function Router() {
             <Routes>
                 <Route path="/" element={<Welcome />} />
                 <Route path="/organizations" element={<Organizations />} />
-                <Route path="/organizationForm" element={<OrganizationForm />} />
+                <Route path="/organizationForm/:id" element={<OrganizationForm />} />
                 <Route path="/organizationInfos/:id" element={<OrganizationInfos />} />
                 <Route path="/events" element={<Event />} />
                 <Route path="/partiers" element={<Partiers />} />

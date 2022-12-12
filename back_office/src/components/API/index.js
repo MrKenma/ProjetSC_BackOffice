@@ -1,19 +1,14 @@
 import axios from './http';
 
-/*
-export async function getOrganization() {
+export async function getOrganization(id) {
     try {
-        const response = axios.get('/organization/cercleIESN@gmail.com')
-            .then(function (response) {
-                console.log(response.data);
-            });
-        return response;
+        const res = await axios.get(`organization/${id}`);
+        return res.data;
     } catch (error) {
         console.log(error)
         return [];
     }
 }
-*/
 
 export async function getOrganizations() {
     try {
@@ -22,6 +17,22 @@ export async function getOrganizations() {
     } catch (error) {
         console.error(error);
         return [];
+    }
+}
+
+export async function postOrganization(organization) {
+    try {
+        console.log("Post organization");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function updateOrganization() {
+    try {
+        console.log("Update organization");
+    } catch (error) {
+        console.error(error);
     }
 }
 

@@ -24,7 +24,7 @@ const OrganizationsTab = (props) => {
                         <td>{organization.responsiblename}</td>
                         <td className="flex">
                             <InfosButton id={organization.id} />
-                            <ModifyButton />
+                            <ModifyButton id={organization.id} />
                         </td>
                     </tr>
                 );
