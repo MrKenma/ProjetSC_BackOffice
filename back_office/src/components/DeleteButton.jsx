@@ -1,8 +1,14 @@
 import React from 'react';
+import {deleteOrganization} from "./API";
+import {Link} from "react-router-dom";
 
-function DeleteButton() {
+function DeleteButton(props) {
+
+
     return (
-        <button className="btn btn-error w-full max-w-xs mt-4">Delete</button>
+        <Link to="/organizations">
+            <button className="btn btn-error w-full max-w-xs mt-4" onClick={() => deleteOrganization(props.id)}>Delete</button>
+        </Link>
     );
 }
 

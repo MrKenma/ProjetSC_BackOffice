@@ -23,14 +23,24 @@ export async function getOrganizations() {
 export async function postOrganization(organization) {
     try {
         console.log("Post organization");
+        const res = await axios.post('organization', organization);
     } catch (error) {
         console.error(error);
     }
 }
 
-export async function updateOrganization() {
+export async function updateOrganization(organization) {
     try {
         console.log("Update organization");
+        const res = await axios.patch('organization', organization);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function deleteOrganization(id) {
+    try {
+        const res = await axios.delete(`organization/${id}`);
     } catch (error) {
         console.error(error);
     }

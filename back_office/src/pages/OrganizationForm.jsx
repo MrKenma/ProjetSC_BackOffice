@@ -1,5 +1,6 @@
 import React from 'react';
 import {useParams} from 'react-router-dom';
+import {getOrganization} from "../components/API";
 import {postOrganization} from "../components/API";
 import {updateOrganization} from "../components/API";
 
@@ -25,7 +26,10 @@ class OrganizationForm extends React.Component {
             passwordError: "",
             phoneNumberError: "",
             responsibleNameError: "",
-            adminProofError: ""
+            adminProofError: "",
+            loading: true,
+            error: false,
+            errorMessage: ""
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -39,7 +43,28 @@ class OrganizationForm extends React.Component {
     }
 
     searchOrganization() {
-
+        this.setState({loading: true, error: false}, async () => {
+            try {
+                const organization = await getOrganization(this.state.id);
+                this.setState({
+                    loaded: true,
+                    loading: false,
+                    name: organization.name,
+                    email: organization.emailaddress,
+                    password: organization.password,
+                    phoneNumber: organization.referencephonenumber,
+                    responsibleName: organization.responsiblename,
+                    administrativeProof: organization.administrativeproof,
+                });
+            } catch (error) {
+                this.setState({
+                    error: true,
+                    loading: false,
+                    loaded: true,
+                    errorMessage: error.message
+                });
+            }
+        });
     }
 
     handleInputChange(event) {
@@ -93,9 +118,9 @@ class OrganizationForm extends React.Component {
         if (this.validate()) {
             let organization = {
                 name: this.state.name,
-                email: this.state.email,
+                emailAddress: this.state.email,
                 password: this.state.password,
-                phoneNumber: this.state.phoneNumber,
+                referencePhoneNumber: this.state.phoneNumber,
                 responsibleName: this.state.responsibleName,
                 administrativeProof: this.state.administrativeProof
             }

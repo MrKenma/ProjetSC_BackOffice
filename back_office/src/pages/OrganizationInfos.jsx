@@ -61,7 +61,7 @@ class OrganizationInfos extends React.Component {
                     <div>Reference phone number : {this.state.organization.referencephonenumber}</div>
                     <div>Responsible name : {this.state.organization.responsiblename}</div>
                     <div>Administrative proof : {this.state.organization.administrativeproof}</div>
-                    <DeleteButton />
+                    <DeleteButton id={this.state.id} />
                 </div>
             );
         }
