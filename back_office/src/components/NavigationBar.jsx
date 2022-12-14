@@ -13,7 +13,7 @@ function NavigationBar() {
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/organizations">Organizations</Link></li>
                         <li><Link to="/events">Events</Link></li>
-                        <li><Link to="/partiers">Users</Link></li>
+                        <li><Link to="/partiers">Partiers</Link></li>
                     </ul>
                 </div>
                 <div className="navbar-end">
