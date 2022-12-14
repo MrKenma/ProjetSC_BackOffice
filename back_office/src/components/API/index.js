@@ -46,14 +46,4 @@ export async function deleteOrganization(id) {
     }
 }
 
-export async function getPartiers() {
-    try {
-        const res = await axios.get('partier/partiers');
-        return res.data;
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
-}
-
 // toutes les requêtes vers l'API
