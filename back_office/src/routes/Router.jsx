@@ -7,7 +7,7 @@ import Organizations from "../pages/Organizations";
 import OrganizationForm from "../pages/OrganizationForm";
 import OrganizationInfos from "../pages/OrganizationInfos";
 import Event from "../components/Event";
-import Partiers from "../pages/Partiers";
+import Partiers from "../components/Partiers";
 import Login from "../components/Login";
 
 export default function Router() {
