@@ -25,27 +25,34 @@ export async function getOrganizations() {
 
 export async function postOrganization(organization) {
     try {
-        console.log("Post organization");
-        const res = await axios.post('organization', organization);
+        await axios.post('organization', organization);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de l'ajout de l'organisation, réessayez plus tard");
     }
 }
 
 export async function updateOrganization(organization) {
     try {
-        console.log("Update organization");
-        const res = await axios.patch('organization', organization);
+        await axios.patch('organization', organization);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de la modification de l'organisation, réessayez plus tard");
     }
 }
 
 export async function deleteOrganization(id) {
     try {
-        const res = await axios.delete(`organization/${id}`);
+        await axios.delete(`organization/${id}`);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de la suppression de l'organisation, réessayez plus tard");
+    }
+}
+
+export async function organizationNameAlreadyExists(id, name) {
+    try {
+        const res = await axios.get(`organization/organizationByName/${name}`);
+        console.log(res.status);
+    } catch (error) {
+        throw new Error("Un problème est survenu, veuillez réessayer plus tard");
     }
 }
 

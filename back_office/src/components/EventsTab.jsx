@@ -1,7 +1,6 @@
 import React from 'react';
 import InfosButton from "./InfosButton";
 import ModifyButton from "./ModifyButton";
-import Moment from 'moment';
 
 
 const EventsTab = (props) => {

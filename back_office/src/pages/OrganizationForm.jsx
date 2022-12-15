@@ -1,8 +1,8 @@
 import React from 'react';
 import {useParams} from 'react-router-dom';
-import {getOrganization} from "../components/API";
-import {postOrganization} from "../components/API";
-import {updateOrganization} from "../components/API";
+import {getOrganization, postOrganization, updateOrganization, organizationNameAlreadyExists} from "../components/API";
+import {validEmail, validPassword} from "../validation/RegExp";
+import FormModal from "../components/FormModal";
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -33,12 +33,17 @@ class OrganizationForm extends React.Component {
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.postOrganization = this.postOrganization.bind(this);
+        this.submitOrganization = this.submitOrganization.bind(this);
     }
 
     componentDidMount() {
         if (this.state.id !== 0) {
             this.searchOrganization();
+        } else {
+            this.setState({
+                loaded: true,
+                loading: false
+            });
         }
     }
 
@@ -67,6 +72,19 @@ class OrganizationForm extends React.Component {
         });
     }
 
+    nameExists() {
+        this.setState({}, async () => {
+            try {
+                const exists = await organizationNameAlreadyExists(this.state.id, this.state.name);
+                this.setState({
+                    nameExists: exists
+                });
+            } catch (error) {
+                console.log("Error");
+            }
+        });
+    }
+
     handleInputChange(event) {
         const target = event.target;
         const value = target.value; // const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -85,14 +103,23 @@ class OrganizationForm extends React.Component {
         let responsibleNameError = "";
         let adminProofError = "";
 
+        setTimeout(() => this.nameExists(), 1000);
+
+        // Problème, il faudrait recharger la page après avoir ajouté ou modifié une organization
         if (!this.state.name) {
             nameError = "Name field is required";
-        } // else (existe déjà)
+        } else if (this.state.nameExists) {
+            nameError = "This name already exists";
+        }
         if (!this.state.email) {
             emailError = "Email field is required";
+        } else if (!validEmail.test(this.state.email)) {
+            emailError = "Wrong email adress format";
         }
         if (!this.state.password) {
             passwordError = "Password field is required";
+        } else if (!validPassword.test(this.state.password)) {
+            passwordError = "Your password must be minimum 8 characters long and contain a least a number and a capital letter";
         }
         if (!this.state.phoneNumber) {
             phoneNumberError = "Phone number field is required";
@@ -112,7 +139,7 @@ class OrganizationForm extends React.Component {
         return true;
     }
 
-    postOrganization(event) {
+    submitOrganization(event) {
         event.preventDefault();
 
         if (this.validate()) {
@@ -124,19 +151,44 @@ class OrganizationForm extends React.Component {
                 responsibleName: this.state.responsibleName,
                 administrativeProof: this.state.administrativeProof
             }
+
             if (this.state.id === 0) {
-                const res = postOrganization(organization);
+                this.setState({}, async () => {
+                    try {
+                        await postOrganization(organization);
+                        this.setState({
+                            modalMessage: "The organization has been added"
+                        });
+                    } catch (error) {
+                        this.setState({
+                            modalMessage: error.message
+                        });
+                    }
+                });
             } else {
-                organization.id = this.state.id;
-                const res = updateOrganization(organization);
+                this.setState({}, async () => {
+                    try {
+                        organization.id = this.state.id;
+                        await updateOrganization(organization);
+                        this.setState({
+                            modalMessage: "The organization has been modified"
+                        });
+                    } catch (error) {
+                        this.setState({
+                            modalMessage: error.message
+                        });
+                    }
+                });
             }
+
+            document.getElementById("submitModal").click();
         }
     }
 
     render() {
         return (
             <div className="flex justify-center items-center">
-                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.postOrganization}>
+                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitOrganization}>
                     <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Organization form</div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="name">
@@ -188,6 +240,7 @@ class OrganizationForm extends React.Component {
                     </div>
                     <button type="submit" className="btn my-4">Save changes</button>
                 </form>
+                <FormModal modalMessage={this.state.modalMessage} />
             </div>
         );
     }
