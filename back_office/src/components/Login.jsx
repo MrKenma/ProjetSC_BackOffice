@@ -10,13 +10,13 @@ class Login extends React.Component{
                         <label className="label" htmlFor="name">
                             <span className="label-text">Identifiant</span>
                         </label>
-                        <input id="name" type="text" placeholder="ex: besafe@gmail.com" className="input" />
+                        <input id="name" type="email" placeholder="ex: besafe@gmail.com" className="input" />
                     </div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="name">
                             <span className="label-text">Password</span>
                         </label>
-                        <input id="name" type="text" placeholder="********" className="input" />
+                        <input id="name" type="password" placeholder="" className="input" />
                     </div>
                     <button type="submit" className="btn my-4">Log In</button>
                 </form>

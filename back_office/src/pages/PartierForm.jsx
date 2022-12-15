@@ -164,7 +164,7 @@ class PartierForm extends React.Component {
                         <label className="label" htmlFor="emailAddress">
                             <span className="label-text">E-mail address</span>
                         </label>
-                        <input id="emailAddress" type="text" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
+                        <input id="emailAddress" type="email" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.emailAddress} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailAddressError}</span>
                     </div>
@@ -180,7 +180,7 @@ class PartierForm extends React.Component {
                         <label className="label" htmlFor="password">
                             <span className="label-text">Password</span>
                         </label>
-                        <input id="password" type="text" placeholder="********" className="input placeholder-gray-500 text-gray-200"
+                        <input id="password" type="password" placeholder="********" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.password} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
                     </div>
@@ -204,7 +204,7 @@ class PartierForm extends React.Component {
                         <label className="label" htmlFor="name">
                             <span className="label-text">Profile picture</span>
                         </label>
-                        <input type="file" label="Choose file" name="file" onChange={(e)=>this.handleFile(e)}/>
+                        <input type="file" label="Choose file" accept=".png, .jpeg" name="file" onChange={(e)=>this.handleFile(e)}/>
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.pictureError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
@@ -235,7 +235,7 @@ class PartierForm extends React.Component {
                         <label className="label" htmlFor="addressZipCode">
                             <span className="label-text">Zip code</span>
                         </label>
-                        <input id="addressZipCode" type="text" placeholder="****" className="input placeholder-gray-500 text-gray-200"
+                        <input id="addressZipCode" type="text" placeholder="5002" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.addressZipCode} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressZipCodeError}</span>
                     </div>
