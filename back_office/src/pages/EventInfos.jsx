@@ -2,6 +2,7 @@ import React from 'react';
 import {useParams} from 'react-router-dom';
 import {getEvent} from "../components/API";
 import DeleteButton from "../components/DeleteButton";
+import Moment from 'moment';
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -61,8 +62,8 @@ class EventInfos extends React.Component {
                     <div>Street's name and number: {this.state.event.nameandnumstreet}</div>
                     <div>Town's name : {this.state.event.addresstown}</div>
                     <div>Zip code : {this.state.event.addresszipcode}</div>
-                    <div>Start date and time : {this.state.event.startdateandtime}</div>
-                    <div>End date and time: {this.state.event.enddateandtime}</div>
+                    <div>Start date and time : {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
+                    <div>End date and time: {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
                     <div>Organization: {this.state.event.organizationid}</div>
                     <DeleteButton id={this.state.id} />
                 </div>

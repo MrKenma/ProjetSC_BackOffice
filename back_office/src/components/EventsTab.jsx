@@ -1,6 +1,8 @@
 import React from 'react';
 import InfosButton from "./InfosButton";
 import ModifyButton from "./ModifyButton";
+import Moment from 'moment';
+
 
 const EventsTab = (props) => {
     const events = props.events;
@@ -21,7 +23,7 @@ const EventsTab = (props) => {
                 return (
                     <tr key={event.id}>
                         <td>{event.name}</td>
-                        <td>{event.startdateandtime}</td>
+                        <td>{Moment(event.startdateandtime).format('DD/MM/yy hh:mm')}</td>
                         <td>{event.addresstown+", "+event.nameandnumstreet}</td>
                         <td>{event.organizationid}</td>
                         <td className="flex">
