@@ -116,8 +116,8 @@ class EventForm extends React.Component {
             addressZipCodeError = "Zip code is required";
         }
 
-        if (nameError || descriptionError || nameAndNumStreetError || startDateAndTimeError || endDateAndTimeError || organizationIdError || addressTownError || addressZipCodeError) {
-            this.setState({nameError, descriptionError, nameAndNumStreetError, startDateAndTimeError, endDateAndTimeError,organizationIdError,addressTownError,addressZipCodeError});
+        if (nameError || descriptionError || nameAndNumStreetError || departingPointError || startDateAndTimeError || endDateAndTimeError || organizationIdError || addressTownError || addressZipCodeError) {
+            this.setState({nameError, descriptionError, nameAndNumStreetError, departingPointError, startDateAndTimeError, endDateAndTimeError,organizationIdError,addressTownError,addressZipCodeError});
             return false;
         }
 
