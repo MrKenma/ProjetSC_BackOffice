@@ -117,7 +117,7 @@ class EventForm extends React.Component {
         }
 
         if (nameError || descriptionError || nameAndNumStreetError || departingPointError || startDateAndTimeError || endDateAndTimeError || organizationIdError || addressTownError || addressZipCodeError) {
-            this.setState({nameError, descriptionError, nameAndNumStreetError, departingPointError,startDateAndTimeError, endDateAndTimeError,organizationIdError,addressTownError,addressZipCodeError});
+            this.setState({nameError, descriptionError, nameAndNumStreetError, departingPointError, startDateAndTimeError, endDateAndTimeError,organizationIdError,addressTownError,addressZipCodeError});
             return false;
         }
 
@@ -202,33 +202,19 @@ class EventForm extends React.Component {
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.departingPointError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <tr><td>
-                            <label className="label" htmlFor="startDateAndTime">
-                                <span className="label-text">Start date</span>
-                            </label>
-                            <input id="startDateAndTime" type="date" className="input placeholder-gray-500 text-gray-200"/>
-                        </td>
-                        <td>
-                            <label className="label" htmlFor="startDateAndTime">
-                                <span className="label-text">Start time</span>
-                            </label>
-                            <input id="startDateAndTime" type="time" className="input placeholder-gray-500 text-gray-200"/>
-                        </td></tr>
+                        <label className="label" htmlFor="startDateAndTime">
+                            <span className="label-text">Start date and time</span>
+                        </label>
+                        <input id="startDateAndTime" type="datetime-local" placeholder="**/**/**-**:**" className="input placeholder-gray-500 text-gray-200"
+                               value={this.state.startDateAndTime} onChange={this.handleInputChange}/>
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.startDateAndTimeError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <tr><td>
-                            <label className="label" htmlFor="endDateAndTime">
-                                <span className="label-text">End date</span>
-                            </label>
-                            <input id="endDateAndTime" type="date" className="input placeholder-gray-500 text-gray-200"/>
-                        </td>
-                        <td>
-                            <label className="label" htmlFor="endDateAndTime">
-                                <span className="label-text">End time</span>
-                            </label>
-                            <input id="endDateAndTime" type="time" className="input placeholder-gray-500 text-gray-200"/>
-                        </td></tr>
+                        <label className="label" htmlFor="endDateAndTime">
+                            <span className="label-text">End date and time</span>
+                        </label>
+                        <input id="endDateAndTime" type="datetime-local" placeholder="**/**/**-**:**" className="input placeholder-gray-500 text-gray-200"
+                               value={this.state.endDateAndTime} onChange={this.handleInputChange}/>
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.endDateAndTimeError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
