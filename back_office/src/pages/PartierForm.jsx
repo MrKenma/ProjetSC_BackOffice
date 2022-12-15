@@ -161,42 +161,42 @@ class PartierForm extends React.Component {
                 <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.postpartier}>
                     <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Partier form</div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="emailAddress">
                             <span className="label-text">E-mail address</span>
                         </label>
-                        <input id="name" type="text" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
+                        <input id="emailAddress" type="text" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.emailAddress} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailAddressError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="pseudo">
                             <span className="label-text">Login</span>
                         </label>
-                        <input id="name" type="text" placeholder="ex: TomDup" className="input placeholder-gray-500 text-gray-200"
+                        <input id="pseudo" type="text" placeholder="ex: TomDup" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.pseudo} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.pseudoError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="password">
                             <span className="label-text">Password</span>
                         </label>
-                        <input id="name" type="text" placeholder="********" className="input placeholder-gray-500 text-gray-200"
+                        <input id="password" type="text" placeholder="********" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.password} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="firstName">
                             <span className="label-text">Firstname</span>
                         </label>
-                        <input id="name" type="text" placeholder="ex: Thomas" className="input placeholder-gray-500 text-gray-200"
+                        <input id="firstName" type="text" placeholder="ex: Thomas" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.firstName} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.firstNameError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="lastName">
                             <span className="label-text">Lastname</span>
                         </label>
-                        <input id="name" type="text" placeholder="ex: Dupont" className="input placeholder-gray-500 text-gray-200"
+                        <input id="lastName" type="text" placeholder="ex: Dupont" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.lastName} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.lastNameError}</span>
                     </div>
@@ -208,34 +208,34 @@ class PartierForm extends React.Component {
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.pictureError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="phoneNumber">
                             <span className="label-text">Phone number</span>
                         </label>
-                        <input id="name" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
+                        <input id="phoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.phoneNumber} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.phoneNumberError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="refPhoneNumber">
                             <span className="label-text">Reference's phone number</span>
                         </label>
-                        <input id="name" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
+                        <input id="refPhoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.refPhoneNumber} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.refPhoneNumberError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="addressTown">
                             <span className="label-text">Town's name</span>
                         </label>
-                        <input id="name" type="text" placeholder="ex: Paris" className="input placeholder-gray-500 text-gray-200"
+                        <input id="addressTown" type="text" placeholder="ex: Paris" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.addressTown} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressTownError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
+                        <label className="label" htmlFor="addressZipCode">
                             <span className="label-text">Zip code</span>
                         </label>
-                        <input id="name" type="text" placeholder="****" className="input placeholder-gray-500 text-gray-200"
+                        <input id="addressZipCode" type="text" placeholder="****" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.addressZipCode} onChange={this.handleInputChange} />
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressZipCodeError}</span>
                     </div>
