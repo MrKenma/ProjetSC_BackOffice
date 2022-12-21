@@ -103,7 +103,6 @@ class PartierForm extends React.Component {
         let passwordError = "";
         let firstNameError = ""; 
         let lastNameError = "";
-        let pictureError = ""; 
         let phoneNumberError = ""; 
         let refPhoneNumberError = "";
         let addressTownError = ""; 
@@ -115,7 +114,7 @@ class PartierForm extends React.Component {
             emailAddressError = "E-mail field is required";
         }else if (this.state.emailExists) {
             emailAddressError = "This email address already exists";
-        }else if (!validEmail.test(this.state.email)) {
+        }else if (!validEmail.test(this.state.emailAddress)) {
             emailAddressError = "Wrong email adress format";
         }
         if (!this.state.pseudo) {
@@ -132,9 +131,6 @@ class PartierForm extends React.Component {
         if (!this.state.lastName) {
             lastNameError = "Last name is required";
         }
-        if (!this.state.picture) {
-            pictureError = "Profile picture is required";
-        }
         if (!this.state.phoneNumber) {
             phoneNumberError = "Phone number is required";
         }
@@ -148,8 +144,8 @@ class PartierForm extends React.Component {
             addressZipCodeError = "Zip code is required";
         }
 
-        if (emailAddressError || pseudoError || passwordError || firstNameError || lastNameError || pictureError || phoneNumberError || refPhoneNumberError || addressTownError || addressZipCodeError) {
-            this.setState({emailAddressError , pseudoError , passwordError , firstNameError , lastNameError , pictureError , phoneNumberError , refPhoneNumberError , addressTownError , addressZipCodeError});
+        if (emailAddressError || pseudoError || passwordError || firstNameError || lastNameError || phoneNumberError || refPhoneNumberError || addressTownError || addressZipCodeError) {
+            this.setState({emailAddressError , pseudoError , passwordError , firstNameError , lastNameError, phoneNumberError , refPhoneNumberError , addressTownError , addressZipCodeError});
             return false;
         }
 
@@ -161,16 +157,15 @@ class PartierForm extends React.Component {
 
         if (this.validate()) {
             let partier = {
-                emailAddress: this.state.emailaddress, 
+                emailAddress: this.state.emailAddress, 
                 pseudo: this.state.pseudo, 
                 password: this.state.password, 
-                firstName: this.state.firstname, 
-                lastName: this.state.lastname, 
+                firstName: this.state.firstName, 
+                lastName: this.state.lastName, 
                 picture: this.state.picture, 
-                phoneNumber: this.state.phonenumber, 
-                refPhoneNumber: this.state.refphonenumber, 
-                addressTown: this.state.addresstown, 
-                addressZipCode: this.state.addresszipcode,
+                phoneNumber: this.state.phoneNumber,  
+                addressTown: this.state.addressTown, 
+                addressZipCode: this.state.addressZipCode,
             }
             if (this.state.id === 0) {
                 this.setState({}, async () => {
@@ -254,8 +249,7 @@ class PartierForm extends React.Component {
                         <label className="label" htmlFor="name">
                             <span className="label-text">Profile picture</span>
                         </label>
-                        <input type="file" label="Choose file" accept=".png, .jpeg" name="file" onChange={(e)=>this.handleFile(e)}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.pictureError}</span>
+                        <input type="file" label="Choose file" name="file" value={this.handleFile} onChange={this.handleInputChange}/>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="phoneNumber">
@@ -271,7 +265,6 @@ class PartierForm extends React.Component {
                         </label>
                         <input id="refPhoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.refPhoneNumber} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.refPhoneNumberError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="addressTown">
