@@ -13,6 +13,7 @@ import Partiers from "../pages/Partiers";
 import PartierForm from "../pages/PartierForm";
 import PartierInfos from "../pages/PartierInfos";
 import Login from "../components/Login";
+import Register from "../pages/Register";
 
 export default function Router() {
     return (
@@ -29,7 +30,8 @@ export default function Router() {
                 <Route path="/partiers" element={<Partiers />} />
                 <Route path="/partierForm/:id" element={<PartierForm />} />
                 <Route path="/partierInfos/:id" element={<PartierInfos />} /> 
-                <Route path="/login" element={<Login/>}/>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
             </Routes>
         </BrowserRouter>
     )

@@ -18,7 +18,7 @@ function NavigationBar() {
                 </div>
                 <div className="navbar-end">
                     <ul className="menu menu-horizontal">
-                        <li><Link to="/register">Register</Link></li>
+                        <li><Link className="btn" to="/register">Register</Link></li>
                         <li><NavLink className="btn" to="/login">Log in</NavLink></li>
                     </ul>
                 </div>

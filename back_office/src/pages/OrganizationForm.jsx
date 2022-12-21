@@ -72,17 +72,9 @@ class OrganizationForm extends React.Component {
         });
     }
 
-    nameExists() {
-        this.setState({}, async () => {
-            try {
-                const exists = await organizationNameAlreadyExists(this.state.id, this.state.name);
-                this.setState({
-                    nameExists: exists
-                });
-            } catch (error) {
-                console.log("Error");
-            }
-        });
+    async nameExists() {
+        const rep = await organizationNameAlreadyExists(this.state.id, this.state.name);
+        return rep.exists
     }
 
     handleInputChange(event) {
@@ -95,7 +87,7 @@ class OrganizationForm extends React.Component {
         });
     }
 
-    validate() {
+    async validate() {
         let nameError = "";
         let emailError = "";
         let passwordError = "";
@@ -103,12 +95,12 @@ class OrganizationForm extends React.Component {
         let responsibleNameError = "";
         let adminProofError = "";
 
-        setTimeout(() => this.nameExists(), 1000);
+        const exist = await this.nameExists();
+        console.log(this.state.nameExists);
 
-        // Problème, il faudrait recharger la page après avoir ajouté ou modifié une organization
         if (!this.state.name) {
             nameError = "Name field is required";
-        } else if (this.state.nameExists) {
+        } else if (exist) {
             nameError = "This name already exists";
         }
         if (!this.state.email) {
@@ -131,18 +123,19 @@ class OrganizationForm extends React.Component {
             adminProofError = "Administrative proof is required";
         }
 
+        this.setState({nameError, emailError, passwordError, phoneNumberError, responsibleNameError, adminProofError});
+
         if (nameError || emailError || passwordError || phoneNumberError || responsibleNameError || adminProofError) {
-            this.setState({nameError, emailError, passwordError, phoneNumberError, responsibleNameError, adminProofError});
             return false;
         }
 
         return true;
     }
 
-    submitOrganization(event) {
+    async submitOrganization(event) {
         event.preventDefault();
 
-        if (this.validate()) {
+        if (await this.validate()) {
             let organization = {
                 name: this.state.name,
                 emailAddress: this.state.email,
@@ -240,7 +233,7 @@ class OrganizationForm extends React.Component {
                     </div>
                     <button type="submit" className="btn my-4">Save changes</button>
                 </form>
-                <FormModal modalMessage={this.state.modalMessage} />
+                <FormModal modalMessage={this.state.modalMessage} id={this.state.id} path="/organization" />
             </div>
         );
     }

@@ -23,7 +23,7 @@ const EventsTab = (props) => {
                 return (
                     <tr key={event.id}>
                         <td>{event.name}</td>
-                        <td>{Moment(event.startdateandtime).format('DD/MM/yy hh:mm')}</td>
+                        <td>{(event.startdateandtime).format('DD/MM/yy hh:mm')}</td>
                         <td>{event.addresstown+", "+event.nameandnumstreet}</td>
                         <td>{event.organizationid}</td>
                         <td className="flex">

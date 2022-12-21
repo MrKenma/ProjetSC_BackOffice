@@ -27,7 +27,7 @@ export async function postOrganization(organization) {
     try {
         await axios.post('organization', organization);
     } catch (error) {
-        throw new Error("Un problème est survenu lors de l'ajout de l'organisation, réessayez plus tard");
+        throw new Error("A problem occurred when adding the organisation, try again later");
     }
 }
 
@@ -35,7 +35,7 @@ export async function updateOrganization(organization) {
     try {
         await axios.patch('organization', organization);
     } catch (error) {
-        throw new Error("Un problème est survenu lors de la modification de l'organisation, réessayez plus tard");
+        throw new Error("A problem occurred while editing the organisation, try again later");
     }
 }
 
@@ -43,16 +43,16 @@ export async function deleteOrganization(id) {
     try {
         await axios.delete(`organization/${id}`);
     } catch (error) {
-        throw new Error("Un problème est survenu lors de la suppression de l'organisation, réessayez plus tard");
+        throw new Error("A problem occurred when deleting the organisation, try again later");
     }
 }
 
 export async function organizationNameAlreadyExists(id, name) {
     try {
-        const res = await axios.get(`organization/organizationByName/${name}`);
-        console.log(res.status);
+        const res = await axios.post(`organization/nameExists`, {id, name});
+        return res.data;
     } catch (error) {
-        throw new Error("Un problème est survenu, veuillez réessayer plus tard");
+        throw new Error("A problem has occurred, please try again later");
     }
 }
 
