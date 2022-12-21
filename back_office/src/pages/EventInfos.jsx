@@ -2,6 +2,7 @@ import React from 'react';
 import {useParams} from 'react-router-dom';
 import {getEvent} from "../components/API";
 import DeleteButton from "../components/DeleteButton";
+import Moment from 'moment';
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;

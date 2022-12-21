@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link, NavLink} from 'react-router-dom';
 
 function NavigationBar() {
     return (
@@ -17,7 +17,10 @@ function NavigationBar() {
                     </ul>
                 </div>
                 <div className="navbar-end">
-                    <a className="btn" href="/login">Log in</a>
+                    <ul className="menu menu-horizontal">
+                        <li><Link to="/register">Register</Link></li>
+                        <li><NavLink className="btn" to="/login">Log in</NavLink></li>
+                    </ul>
                 </div>
             </div>
         </div>

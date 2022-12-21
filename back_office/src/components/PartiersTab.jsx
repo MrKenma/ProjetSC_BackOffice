@@ -26,8 +26,8 @@ const PartiersTab = (props) => {
                         <td>{partier.emailaddress}</td>
                         <td>{partier.addresstown+" "+partier.addresszipcode}</td>
                         <td className="flex">
-                            <InfosButton id={partier.id} />
-                            <ModifyButton id={partier.id} />
+                        <InfosButton path={`/partierInfos/${partier.id}`} />
+                        <ModifyButton path={`/partierForm/${partier.id}`} />
                         </td>
                     </tr>
                 );

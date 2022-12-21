@@ -2,7 +2,7 @@ import React from 'react';
 import {deleteOrganization} from "./API";
 import {Link} from "react-router-dom";
 
-function DeleteButton(props) {
+function deleteButton(props) {
     return (
         <div>
             <label htmlFor="my-modal" className="btn btn-error w-full max-w-xs mt-4">Delete</label>
@@ -23,4 +23,4 @@ function DeleteButton(props) {
     );
 }
 
-export default DeleteButton;
+export default deleteButton;

@@ -81,29 +81,38 @@ export async function getPartiers() {
 
 export async function postPartier(partier) {
     try {
-        console.log("Post partier");
-        const res = await axios.post('partier', partier);
+        await axios.post('partier', partier);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de l'ajout de l'utilisateur, réessayez plus tard");
     }
 }
 
 export async function updatePartier(partier) {
     try {
-        console.log("Update partier");
-        const res = await axios.patch('partier', partier);
+        await axios.patch('partier', partier);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de la modification de l'utilisateur, réessayez plus tard");
     }
 }
 
 export async function deletePartier(id) {
     try {
-        const res = await axios.delete(`partier/${id}`);
+        await axios.delete(`partier/${id}`);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de la suppression de l'utilisateur, réessayez plus tard");
     }
 }
+
+export async function emailAlreadyExists(id, name) {
+    try {
+        const res = await axios.get(`partier/partierByName/${name}`);
+        console.log(res.status);
+    } catch (error) {
+        throw new Error("Un problème est survenu, veuillez réessayer plus tard");
+    }
+}
+
+
 
 /*-------------------------------------
 EVENTS
@@ -131,28 +140,25 @@ export async function getEvents() {
 
 export async function postEvent(event) {
     try {
-        console.log("Post event");
-        const res = await axios.post('event', event);
+        await axios.post('event', event);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de l'ajout de l'événement, réessayez plus tard");
     }
 }
 
 export async function updateEvent(event) {
     try {
-        console.log("Update event");
-        const res = await axios.patch('event', event);
+        await axios.patch('event', event);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de la modification de l'événement, réessayez plus tard");
     }
 }
 
 export async function deleteEvent(id) {
     try {
-        const res = await axios.delete(`event/${id}`);
+        await axios.delete(`event/${id}`);
     } catch (error) {
-        console.error(error);
+        throw new Error("Un problème est survenu lors de la suppression de l'événement, réessayez plus tard");
     }
 }
 
-// toutes les requêtes vers l'API

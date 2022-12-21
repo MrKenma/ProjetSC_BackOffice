@@ -66,7 +66,7 @@ class Partiers extends React.Component {
         return (
             <div className="flex">
                 <div className="flex-none w-56 bg-neutral">
-                    <AddButton />
+                    <AddButton path="/partierForm/0"/>
                     <FilterBox callback={(searchValue) => this.changeValuesToShow(searchValue)} />
                 </div>
                 <div className="flex-auto overflow-x-auto">

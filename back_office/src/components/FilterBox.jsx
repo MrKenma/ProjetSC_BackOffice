@@ -9,8 +9,8 @@ class FilterBox extends React.Component {
         };
     }
 
-    changeSearchValue(event) {
-        this.setState({searchValue: event.target.value}, () => {
+    changeSearchValue(action) {
+        this.setState({searchValue: action.target.value}, () => {
             this.state.callback(this.state.searchValue);
         })
     }
@@ -22,7 +22,7 @@ class FilterBox extends React.Component {
                 placeholder="Filter by responsible name"
                 className="input input-bordered w-5/6 mt-12 mb-12"
                 onChange={
-                    (event) => this.changeSearchValue(event)
+                    (action) => this.changeSearchValue(action)
                 }
             />
         );

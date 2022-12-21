@@ -23,7 +23,7 @@ const OrganizationsTab = (props) => {
                         <td>{organization.name}</td>
                         <td>{organization.responsiblename}</td>
                         <td className="flex">
-                            <InfosButton id={organization.id} />
+                            <InfosButton path={`/organizationInfos/${organization.id}`} />
                             <ModifyButton path={`/organizationForm/${organization.id}`} />
                         </td>
                     </tr>

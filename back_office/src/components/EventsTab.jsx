@@ -1,6 +1,7 @@
 import React from 'react';
 import InfosButton from "./InfosButton";
 import ModifyButton from "./ModifyButton";
+import Moment from 'moment';
 
 
 const EventsTab = (props) => {
@@ -26,8 +27,8 @@ const EventsTab = (props) => {
                         <td>{event.addresstown+", "+event.nameandnumstreet}</td>
                         <td>{event.organizationid}</td>
                         <td className="flex">
-                            <InfosButton id={event.id} />
-                            <ModifyButton id={event.id} />
+                        <InfosButton path={`/eventInfos/${event.id}`} />
+                        <ModifyButton path={`/eventForm/${event.id}`} />
                         </td>
                     </tr>
                 );

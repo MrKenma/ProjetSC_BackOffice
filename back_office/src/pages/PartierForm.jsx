@@ -1,8 +1,8 @@
 import React from 'react';
 import {useParams} from 'react-router-dom';
-import {getPartier} from "../components/API";
-import {postPartier} from "../components/API";
-import {updatePartier} from "../components/API";
+import {getPartier, postPartier, updatePartier, emailAlreadyExists} from "../components/API";
+import {validEmail, validPassword} from "../validation/RegExp";
+import FormModal from "../components/FormModal";
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -31,12 +31,17 @@ class PartierForm extends React.Component {
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.postPartier = this.postPartier.bind(this);
+        this.submitPartier = this.submitPartier.bind(this);
     }
 
     componentDidMount() {
         if (this.state.id !== 0) {
             this.searchPartier();
+        } else {
+            this.setState({
+                loaded: true,
+                loading: false
+            });
         }
     }
 
@@ -47,16 +52,16 @@ class PartierForm extends React.Component {
                 this.setState({
                     loaded: true,
                     loading: false,
-                    emailAddress: partier.emailAddress, 
+                    emailAddress: partier.emailaddress, 
                     pseudo: partier.pseudo, 
                     password: partier.password, 
-                    firstName: partier.firstName, 
-                    lastName: partier.lastName, 
+                    firstName: partier.firstname, 
+                    lastName: partier.lastname, 
                     picture: partier.picture, 
-                    phoneNumber: partier.phoneNumber, 
-                    refPhoneNumber: partier.refPhoneNumber, 
-                    addressTown: partier.addressTown, 
-                    addressZipCode: partier.addressZipCode,
+                    phoneNumber: partier.phonenumber, 
+                    refPhoneNumber: partier.refphonenumber, 
+                    addressTown: partier.addresstown, 
+                    addressZipCode: partier.addresszipcode,
                 });
             } catch (error) {
                 this.setState({
@@ -65,6 +70,19 @@ class PartierForm extends React.Component {
                     loaded: true,
                     errorMessage: error.message
                 });
+            }
+        });
+    }
+
+    emailExists() {
+        this.setState({}, async () => {
+            try {
+                const exists = await emailAlreadyExists(this.state.id, this.state.emailAddress);
+                this.setState({
+                    emailExists: exists
+                });
+            } catch (error) {
+                console.log("Error");
             }
         });
     }
@@ -90,15 +108,23 @@ class PartierForm extends React.Component {
         let refPhoneNumberError = "";
         let addressTownError = ""; 
         let addressZipCodeError = "";
+        
+        setTimeout(() => this.emailExists(), 1000);
 
         if (!this.state.emailAddress) {
             emailAddressError = "E-mail field is required";
-        } // else (existe déjà)
+        }else if (this.state.emailExists) {
+            emailAddressError = "This email address already exists";
+        }else if (!validEmail.test(this.state.email)) {
+            emailAddressError = "Wrong email adress format";
+        }
         if (!this.state.pseudo) {
             pseudoError = "Pseudo field is required";
         }
         if (!this.state.password) {
             passwordError = "Password field is required";
+        } else if (!validPassword.test(this.state.password)) {
+            passwordError = "Your password must be minimum 8 characters long and contain a least a number and a capital letter";
         }
         if (!this.state.firstName) {
             firstNameError = "First name field is required";
@@ -130,35 +156,59 @@ class PartierForm extends React.Component {
         return true;
     }
 
-    postPartier(event) {
+    submitPartier(event) {
         event.preventDefault();
 
         if (this.validate()) {
             let partier = {
-                emailAddress: this.state.emailAddress, 
+                emailAddress: this.state.emailaddress, 
                 pseudo: this.state.pseudo, 
                 password: this.state.password, 
-                firstName: this.state.firstName, 
-                lastName: this.state.lastName, 
+                firstName: this.state.firstname, 
+                lastName: this.state.lastname, 
                 picture: this.state.picture, 
-                phoneNumber: this.state.phoneNumber, 
-                refPhoneNumber: this.state.refPhoneNumber, 
-                addressTown: this.state.addressTown, 
-                addressZipCode: this.state.addressZipCode,
+                phoneNumber: this.state.phonenumber, 
+                refPhoneNumber: this.state.refphonenumber, 
+                addressTown: this.state.addresstown, 
+                addressZipCode: this.state.addresszipcode,
             }
             if (this.state.id === 0) {
-                const res = postPartier(partier);
+                this.setState({}, async () => {
+                    try {
+                        await postPartier(partier);
+                        this.setState({
+                            modalMessage: "The partier has been added"
+                        });
+                    } catch (error) {
+                        this.setState({
+                            modalMessage: error.message
+                        });
+                    }
+                });
             } else {
-                partier.id = this.state.id;
-                const res = updatePartier(partier);
+                this.setState({}, async () => {
+                    try {
+                        partier.id = this.state.id;
+                        await updatePartier(partier);
+                        this.setState({
+                            modalMessage: "The organization has been modified"
+                        });
+                    } catch (error) {
+                        this.setState({
+                            modalMessage: error.message
+                        });
+                    }
+                });
             }
+
+            document.getElementById("submitModal").click();
         }
     }
 
     render() {
         return (
             <div className="flex justify-center items-center">
-                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.postpartier}>
+                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitPartier}>
                     <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Partier form</div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="emailAddress">
@@ -241,6 +291,7 @@ class PartierForm extends React.Component {
                     </div>
                     <button type="submit" className="btn my-4">Save changes</button>
                 </form>
+                <FormModal modalMessage={this.state.modalMessage} />
             </div>
         );
     }

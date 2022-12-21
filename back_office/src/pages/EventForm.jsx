@@ -3,6 +3,8 @@ import {useParams} from 'react-router-dom';
 import {getEvent} from "../components/API";
 import {postEvent} from "../components/API";
 import {updateEvent} from "../components/API";
+import FormModal from '../components/FormModal';
+import Moment from 'moment';
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -30,12 +32,17 @@ class EventForm extends React.Component {
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.postEvent = this.postEvent.bind(this);
+        this.submitEvent = this.submitEvent.bind(this);
     }
 
     componentDidMount() {
         if (this.state.id !== 0) {
             this.searchEvent();
+        } else {
+            this.setState({
+                loaded: true,
+                loading: false
+            });
         }
     }
 
@@ -48,13 +55,13 @@ class EventForm extends React.Component {
                     loading: false,
                     name: event.name, 
                     description: event.description, 
-                    nameAndNumStreet: event.nameAndNumStreet, 
-                    departingPoint: event.departingPoint, 
-                    startDateAndTime: event.startDateAndTime, 
-                    endDateAndTime: event.endDateAndTime, 
-                    organizationId: event.organizationId, 
-                    addressTown: event.addressTown, 
-                    addressZipCode: event.addressZipCode, 
+                    nameAndNumStreet: event.nameandnumstreet, 
+                    departingPoint: event.departingpoint, 
+                    startDateAndTime: Moment(event.startdateandtime).format('jj-mm-aaaa --:--'), 
+                    endDateAndTime: Moment(event.enddateandtime).format('jj-mm-aaaa --:--'), 
+                    organizationId: event.organizationid, 
+                    addressTown: event.addresstown, 
+                    addressZipCode: event.addresszipcode, 
                 });
             } catch (error) {
                 this.setState({
@@ -67,8 +74,8 @@ class EventForm extends React.Component {
         });
     }
 
-    handleInputChange(event) {
-        const target = event.target;
+    handleInputChange(action) {
+        const target = action.target;
         const value = target.value; // const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.id;
 
@@ -124,8 +131,8 @@ class EventForm extends React.Component {
         return true;
     }
 
-    postEvent(event) {
-        event.preventDefault();
+    submitEvent(action) {
+        action.preventDefault();
 
         if (this.validate()) {
             let event = {
@@ -139,19 +146,44 @@ class EventForm extends React.Component {
                 addressTown: this.state.addressTown, 
                 addressZipCode: this.state.addressZipCode
              }
-            if (this.state.id === 0) {
-                const res = postEvent(event);
+
+             if (this.state.id === 0) {
+                this.setState({}, async () => {
+                    try {
+                        await postEvent(event);
+                        this.setState({
+                            modalMessage: "The event has been added"
+                        });
+                    } catch (error) {
+                        this.setState({
+                            modalMessage: error.message
+                        });
+                    }
+                });
             } else {
-                event.id = this.state.id;
-                const res = updateEvent(event);
+                this.setState({}, async () => {
+                    try {
+                        event.id = this.state.id;
+                        await updateEvent(event);
+                        this.setState({
+                            modalMessage: "The event has been modified"
+                        });
+                    } catch (error) {
+                        this.setState({
+                            modalMessage: error.message
+                        });
+                    }
+                });
             }
+
+            document.getElementById("submitModal").click();
         }
     }
 
     render() {
         return (
             <div className="flex justify-center items-center">
-                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.postevent}>
+                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitevent}>
                     <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Event form</div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="name">
@@ -227,6 +259,7 @@ class EventForm extends React.Component {
                     </div>
                     <button type="submit" className="btn my-4">Save changes</button>
                 </form>
+                <FormModal modalMessage={this.state.modalMessage} />
             </div>
         );
     }
