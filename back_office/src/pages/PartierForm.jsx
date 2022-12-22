@@ -74,19 +74,6 @@ class PartierForm extends React.Component {
         });
     }
 
-    emailExists() {
-        this.setState({}, async () => {
-            try {
-                const exists = await emailAlreadyExists(this.state.id, this.state.emailAddress);
-                this.setState({
-                    emailExists: exists
-                });
-            } catch (error) {
-                console.log("Error");
-            }
-        });
-    }
-
     handleInputChange(event) {
         const target = event.target;
         const value = target.value; // const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -97,7 +84,7 @@ class PartierForm extends React.Component {
         });
     }
 
-    validate() {
+    async validate() {
         let emailAddressError = "";
         let pseudoError = "";
         let passwordError = "";
@@ -108,11 +95,12 @@ class PartierForm extends React.Component {
         let addressTownError = ""; 
         let addressZipCodeError = "";
         
-        setTimeout(() => this.emailExists(), 1000);
+        const res = await emailAlreadyExists(this.state.id, this.state.emailAddress);
+        const emailExists = res.exists;
 
         if (!this.state.emailAddress) {
             emailAddressError = "E-mail field is required";
-        }else if (this.state.emailExists) {
+        }else if (emailExists) {
             emailAddressError = "This email address already exists";
         }else if (!validEmail.test(this.state.emailAddress)) {
             emailAddressError = "Wrong email adress format";
@@ -152,10 +140,10 @@ class PartierForm extends React.Component {
         return true;
     }
 
-    submitPartier(event) {
+    async submitPartier(event) {
         event.preventDefault();
 
-        if (this.validate()) {
+        if (await this.validate()) {
             let partier = {
                 emailAddress: this.state.emailAddress, 
                 pseudo: this.state.pseudo, 

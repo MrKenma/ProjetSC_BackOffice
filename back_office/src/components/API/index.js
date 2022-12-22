@@ -5,7 +5,7 @@ ORGANIZATIONS
 -------------------------------------*/
 export async function getOrganization(id) {
     try {
-        const res = await axios.get(`organization/${id}`);
+        const res = await axios.get(`organization/getOrga/${id}`);
         return res.data;
     } catch (error) {
         console.log(error)
@@ -15,7 +15,7 @@ export async function getOrganization(id) {
 
 export async function getOrganizations() {
     try {
-        const res = await axios.get('organization/organizations');
+        const res = await axios.get('organization/all');
         return res.data;
     } catch (error) {
         console.error(error);
@@ -49,7 +49,7 @@ export async function deleteOrganization(id) {
 
 export async function organizationNameAlreadyExists(id, name) {
     try {
-        const res = await axios.get(`organization/nameExists`, {id, name});
+        const res = await axios.get(`organization/nameExists`, {params: {id, name}});
         return res.data;
     } catch (error) {
         throw new Error("A problem has occurred, please try again later");
@@ -61,7 +61,7 @@ PARTIERS
 -------------------------------------*/
 export async function getPartier(id) {
     try {
-        const res = await axios.get(`partier/${id}`);
+        const res = await axios.get(`partier/getPartier/${id}`);
         return res.data;
     } catch (error) {
         console.log(error)
@@ -71,7 +71,7 @@ export async function getPartier(id) {
 
 export async function getPartiers() {
     try {
-        const res = await axios.get('partier/partiers');
+        const res = await axios.get('partier/all');
         return res.data;
     } catch (error) {
         console.error(error);
@@ -103,15 +103,14 @@ export async function deletePartier(id) {
     }
 }
 
-export async function emailAlreadyExists(id, name) {
+export async function emailAlreadyExists(id, email) {
     try {
-        const res = await axios.get(`partier/partierByName/${name}`);
-        console.log(res.status);
+        const res = await axios.get(`partier/emailExists`, {params: {id, email}});
+        return res.data;
     } catch (error) {
         throw new Error("Un problème est survenu, veuillez réessayer plus tard");
     }
 }
-
 
 
 /*-------------------------------------
@@ -130,7 +129,7 @@ export async function getEvent(id) {
 
 export async function getEvents() {
     try {
-        const res = await axios.get('event/events');
+        const res = await axios.get('event/all');
         return res.data;
     } catch (error) {
         console.error(error);

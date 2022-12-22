@@ -72,11 +72,6 @@ class OrganizationForm extends React.Component {
         });
     }
 
-    async nameExists() {
-        const rep = await organizationNameAlreadyExists(this.state.id, this.state.name);
-        return rep.exists
-    }
-
     handleInputChange(event) {
         const target = event.target;
         const value = target.value; // const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -95,12 +90,12 @@ class OrganizationForm extends React.Component {
         let responsibleNameError = "";
         let adminProofError = "";
 
-        const exist = await this.nameExists();
-        console.log(this.state.nameExists);
+        const res = await organizationNameAlreadyExists(this.state.id, this.state.name);
+        const nameExists = res.exists;
 
         if (!this.state.name) {
             nameError = "Name field is required";
-        } else if (exist) {
+        } else if (nameExists) {
             nameError = "This name already exists";
         }
         if (!this.state.email) {
