@@ -284,7 +284,7 @@ class PartierForm extends React.Component {
                     </div>
                     <button type="submit" className="btn my-4">Save changes</button>
                 </form>
-                <FormModal modalMessage={this.state.modalMessage} />
+                <FormModal modalMessage={this.state.modalMessage} path="/partiers" />
             </div>
         );
     }

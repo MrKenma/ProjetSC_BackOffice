@@ -65,7 +65,7 @@ class EventInfos extends React.Component {
                     <div>Start date and time : {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
                     <div>End date and time: {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
                     <div>Organization: {this.state.event.organizationid}</div>
-                    <DeleteButton id={this.state.id} deleteObject={deleteEvent} />
+                    <DeleteButton id={this.state.id} deleteObject={deleteEvent} path="/events" />
                 </div>
             );
         }

@@ -125,11 +125,7 @@ class OrganizationForm extends React.Component {
 
         this.setState({nameError, emailError, passwordError, phoneNumberError, responsibleNameError, adminProofError});
 
-        if (nameError || emailError || passwordError || phoneNumberError || responsibleNameError || adminProofError) {
-            return false;
-        }
-
-        return true;
+        return !(nameError || emailError || passwordError || phoneNumberError || responsibleNameError || adminProofError);
     }
 
     async submitOrganization(event) {
@@ -233,7 +229,7 @@ class OrganizationForm extends React.Component {
                     </div>
                     <button type="submit" className="btn my-4">Save changes</button>
                 </form>
-                <FormModal modalMessage={this.state.modalMessage} id={this.state.id} path="/organization" />
+                <FormModal modalMessage={this.state.modalMessage} id={this.state.id} path="/organizations" />
             </div>
         );
     }

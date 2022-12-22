@@ -65,7 +65,7 @@ class PartierInfos extends React.Component {
                     <div>Reference's phone number : {this.state.partier.refphonenumber}</div>
                     <div>Town : {this.state.partier.addresstown}</div>
                     <div>Zip code : {this.state.partier.addresszipcode}</div>
-                    <DeleteButton id={this.state.id} deleteObject={deletePartier} />
+                    <DeleteButton id={this.state.id} deleteObject={deletePartier} path="/partiers" />
                 </div>
             );
         }

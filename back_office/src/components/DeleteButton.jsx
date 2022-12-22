@@ -12,7 +12,7 @@ function deleteButton(props) {
                     <p className="py-4">This organization still has <span className="text-red-600">3</span> events incoming</p>
                     <div className="modal-action">
                         <label htmlFor="my-modal" className="btn">Cancel</label>
-                        <Link to="/organizations">
+                        <Link to={props.path}>
                             <label htmlFor="my-modal" className="btn btn-error" onClick={() => props.deleteObject(props.id)}>Delete</label>
                         </Link>
                     </div>
