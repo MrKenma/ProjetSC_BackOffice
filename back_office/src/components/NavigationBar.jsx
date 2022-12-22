@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Link, NavLink} from 'react-router-dom';
+import Auth from '../contexts/Auth';
 
 function NavigationBar() {
+    const{isAuthenticated} =useContext(Auth);
+
+    const handleLogout=()=>{
+        console.log('On est déconnecté');
+    }
+
     return (
         <div className="NavigationBar">
             <div className="bg-info">
                 <p className="text-white text-4xl pb-1">BeSafe</p>
             </div>
-            <div className="navbar bg-neutral">
+            <div className="navbar bg-neutral text-white">
                 <div className="navbar-start">
                     <ul className="menu menu-horizontal p-0">
                         <li><Link to="/">Home</Link></li>
@@ -18,8 +25,17 @@ function NavigationBar() {
                 </div>
                 <div className="navbar-end">
                     <ul className="menu menu-horizontal">
-                        <li><Link className="btn" to="/register">Register</Link></li>
-                        <li><NavLink className="btn" to="/login">Log in</NavLink></li>
+                        {(!isAuthenticated && (
+                            <>
+                        <li><Link to="/register" className="btn">Register</Link></li>
+                        <li><NavLink className="nav-link" to="/login">Log in</NavLink></li>
+                        </>)) 
+                        ||(
+                            <>
+                        <li><Link to="/profile">Profile</Link></li>
+                        <li><button type="button" className="btn-danger text-red" onClick={handleLogout}>Disconnection</button></li>
+                        </>
+                        )}
                     </ul>
                 </div>
             </div>
