@@ -44,8 +44,8 @@ class Events extends React.Component {
 
     changeValuesToShow (string) {
         const eventsToShow = this.state.events;
-        const afterFiltering = eventsToShow.filter(org => {
-            return org.responsiblename.includes(string);
+        const afterFiltering = eventsToShow.filter(event => {
+            return event.organization.includes(string);
         });
         this.setState({eventsToShow: afterFiltering});
     }

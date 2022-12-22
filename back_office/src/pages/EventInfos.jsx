@@ -1,6 +1,6 @@
 import React from 'react';
 import {useParams} from 'react-router-dom';
-import {getEvent} from "../components/API";
+import {getEvent, deleteEvent} from "../components/API";
 import DeleteButton from "../components/DeleteButton";
 import Moment from 'moment';
 
@@ -65,7 +65,7 @@ class EventInfos extends React.Component {
                     <div>Start date and time : {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
                     <div>End date and time: {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
                     <div>Organization: {this.state.event.organizationid}</div>
-                    <DeleteButton id={this.state.id} />
+                    <DeleteButton id={this.state.id} deleteObject={deleteEvent} />
                 </div>
             );
         }

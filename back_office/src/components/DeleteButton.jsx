@@ -1,5 +1,4 @@
 import React from 'react';
-import {deleteOrganization} from "./API";
 import {Link} from "react-router-dom";
 
 function deleteButton(props) {
@@ -14,7 +13,7 @@ function deleteButton(props) {
                     <div className="modal-action">
                         <label htmlFor="my-modal" className="btn">Cancel</label>
                         <Link to="/organizations">
-                            <label htmlFor="my-modal" className="btn btn-error" onClick={() => deleteOrganization(props.id)}>Delete</label>
+                            <label htmlFor="my-modal" className="btn btn-error" onClick={() => props.deleteObject(props.id)}>Delete</label>
                         </Link>
                     </div>
                 </div>

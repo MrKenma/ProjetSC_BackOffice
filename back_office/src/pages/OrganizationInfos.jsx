@@ -1,6 +1,6 @@
 import React from 'react';
-import { useParams} from 'react-router-dom';
-import {getOrganization} from "../components/API";
+import {useParams} from 'react-router-dom';
+import {getOrganization, deleteOrganization} from "../components/API";
 import DeleteButton from "../components/DeleteButton";
 
 function withParams(Component) {
@@ -61,7 +61,7 @@ class OrganizationInfos extends React.Component {
                     <div>Reference phone number : {this.state.organization.referencephonenumber}</div>
                     <div>Responsible name : {this.state.organization.responsiblename}</div>
                     <div>Administrative proof : {this.state.organization.administrativeproof}</div>
-                    <DeleteButton id={this.state.id} />
+                    <DeleteButton id={this.state.id} deleteObject={deleteOrganization} />
                 </div>
             );
         }
