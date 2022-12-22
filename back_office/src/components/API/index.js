@@ -49,7 +49,7 @@ export async function deleteOrganization(id) {
 
 export async function organizationNameAlreadyExists(id, name) {
     try {
-        const res = await axios.post(`organization/nameExists`, {id, name});
+        const res = await axios.get(`organization/nameExists`, {id, name});
         return res.data;
     } catch (error) {
         throw new Error("A problem has occurred, please try again later");

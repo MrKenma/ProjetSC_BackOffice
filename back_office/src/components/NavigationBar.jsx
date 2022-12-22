@@ -27,13 +27,13 @@ function NavigationBar() {
                     <ul className="menu menu-horizontal">
                         {(!isAuthenticated && (
                             <>
-                        <li><Link to="/register" className="btn">Register</Link></li>
-                        <li><NavLink className="nav-link" to="/login">Log in</NavLink></li>
+                        <li><Link to="/register" className="nav-link">Register</Link></li>
+                        <li><NavLink className="btn" to="/login">Log in</NavLink></li>
                         </>)) 
                         ||(
                             <>
                         <li><Link to="/profile">Profile</Link></li>
-                        <li><button type="button" className="btn-danger text-red" onClick={handleLogout}>Disconnection</button></li>
+                        <li><button type="button" className="btn" onClick={handleLogout}>Disconnection</button></li>
                         </>
                         )}
                     </ul>
