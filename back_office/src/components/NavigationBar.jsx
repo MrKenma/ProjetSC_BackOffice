@@ -32,7 +32,7 @@ function NavigationBar() {
                         </>)) 
                         ||(
                             <>
-                        <li><Link to="/profile">Profile</Link></li>
+                        <li><Link to="/profile" className="nav-link">Profile</Link></li>
                         <li><button type="button" className="btn" onClick={handleLogout}>Disconnection</button></li>
                         </>
                         )}
