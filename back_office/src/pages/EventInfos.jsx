@@ -9,6 +9,7 @@ function withParams(Component) {
 }
 
 class EventInfos extends React.Component {
+
     constructor(props) {
         super(props);
         const id = parseInt(this.props.params.id);
@@ -62,7 +63,7 @@ class EventInfos extends React.Component {
                     <div>Town's name : {this.state.event.addresstown}</div>
                     <div>Zip code : {this.state.event.addresszipcode}</div>
                     <div>Start date and time : {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
-                    <div>End date and time: {Moment(this.state.event.enddateandtime).format('DD/MM/yy hh:mm')}</div>
+                    <div>End date and time: {Moment(this.state.event.startdateandtime).format('DD/MM/yy hh:mm')}</div>
                     <div>Organization: {this.state.event.organizationid}</div>
                     <DeleteButton id={this.state.id} />
                 </div>
