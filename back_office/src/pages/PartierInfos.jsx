@@ -59,10 +59,11 @@ class PartierInfos extends React.Component {
                     <div>Profile picture : {this.state.partier.picture}</div>
                     <div>First name : {this.state.partier.firstname}</div>
                     <div>Last name : {this.state.partier.lastname}</div>
-                    <div>E-mail address : {this.state.partier.emailaddress}</div>
+                    <div>E-mail address : {this.state.partier.email}</div>
                     <div>Login : {this.state.partier.pseudo}</div>
                     <div>Phone number : {this.state.partier.phonenumber}</div>
                     <div>Reference's phone number : {this.state.partier.refphonenumber}</div>
+                    <div>Account status : {this.state.partier.isadmin?'Is admin':'Is not admin'}</div>
                     <div>Town : {this.state.partier.addresstown}</div>
                     <div>Zip code : {this.state.partier.addresszipcode}</div>
                     <DeleteButton id={this.state.id} deleteObject={deletePartier} path="/partiers" />

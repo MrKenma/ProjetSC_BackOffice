@@ -19,7 +19,7 @@ const OrganizationsTab = (props) => {
             {organizations.map(organization => {
                 return (
                     <tr key={organization.id}>
-                        <td>{organization.emailaddress}</td>
+                        <td>{organization.email}</td>
                         <td>{organization.name}</td>
                         <td>{organization.responsiblename}</td>
                         <td className="flex">

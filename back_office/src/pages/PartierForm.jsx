@@ -15,14 +15,15 @@ class PartierForm extends React.Component {
 
         this.state = {
             id: id,
-            emailAddress: "", 
+            email: "", 
             pseudo: "", 
             password: "", 
             firstName: "", 
             lastName: "", 
             picture: "", 
             phoneNumber: "", 
-            refPhoneNumber: "", 
+            refPhoneNumber: "",
+            isAdmin:"", 
             addressTown: "", 
             addressZipCode: "",
             loading: true,
@@ -52,7 +53,7 @@ class PartierForm extends React.Component {
                 this.setState({
                     loaded: true,
                     loading: false,
-                    emailAddress: partier.emailaddress, 
+                    email: partier.email, 
                     pseudo: partier.pseudo, 
                     password: partier.password, 
                     firstName: partier.firstname, 
@@ -60,6 +61,7 @@ class PartierForm extends React.Component {
                     picture: partier.picture, 
                     phoneNumber: partier.phonenumber, 
                     refPhoneNumber: partier.refphonenumber, 
+                    isAdmin:partier.isadmin,
                     addressTown: partier.addresstown, 
                     addressZipCode: partier.addresszipcode,
                 });
@@ -85,7 +87,7 @@ class PartierForm extends React.Component {
     }
 
     async validate() {
-        let emailAddressError = "";
+        let emailError = "";
         let pseudoError = "";
         let passwordError = "";
         let firstNameError = ""; 
@@ -95,15 +97,15 @@ class PartierForm extends React.Component {
         let addressTownError = ""; 
         let addressZipCodeError = "";
         
-        const res = await emailAlreadyExists(this.state.id, this.state.emailAddress);
+        const res = await emailAlreadyExists(this.state.id, this.state.email);
         const emailExists = res.exists;
 
-        if (!this.state.emailAddress) {
-            emailAddressError = "E-mail field is required";
+        if (!this.state.email) {
+            emailError = "E-mail field is required";
         }else if (emailExists) {
-            emailAddressError = "This email address already exists";
-        }else if (!validEmail.test(this.state.emailAddress)) {
-            emailAddressError = "Wrong email adress format";
+            emailError = "This email address already exists";
+        }else if (!validEmail.test(this.state.email)) {
+            emailError = "Wrong email adress format";
         }
         if (!this.state.pseudo) {
             pseudoError = "Pseudo field is required";
@@ -132,8 +134,8 @@ class PartierForm extends React.Component {
             addressZipCodeError = "Zip code is required";
         }
 
-        if (emailAddressError || pseudoError || passwordError || firstNameError || lastNameError || phoneNumberError || refPhoneNumberError || addressTownError || addressZipCodeError) {
-            this.setState({emailAddressError , pseudoError , passwordError , firstNameError , lastNameError, phoneNumberError , refPhoneNumberError , addressTownError , addressZipCodeError});
+        if (emailError || pseudoError || passwordError || firstNameError || lastNameError || phoneNumberError || refPhoneNumberError || addressTownError || addressZipCodeError) {
+            this.setState({emailError , pseudoError , passwordError , firstNameError , lastNameError, phoneNumberError , refPhoneNumberError , addressTownError , addressZipCodeError});
             return false;
         }
 
@@ -145,13 +147,15 @@ class PartierForm extends React.Component {
 
         if (await this.validate()) {
             let partier = {
-                emailAddress: this.state.emailAddress, 
+                email: this.state.email, 
                 pseudo: this.state.pseudo, 
                 password: this.state.password, 
                 firstName: this.state.firstName, 
                 lastName: this.state.lastName, 
                 picture: this.state.picture, 
                 phoneNumber: this.state.phoneNumber,  
+                refPhoneNumber: this.state.refPhoneNumber,
+                isAdmin: this.state.isAdmin,
                 addressTown: this.state.addressTown, 
                 addressZipCode: this.state.addressZipCode,
             }
@@ -194,12 +198,12 @@ class PartierForm extends React.Component {
                 <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitPartier}>
                     <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Partier form</div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="emailAddress">
+                        <label className="label" htmlFor="email">
                             <span className="label-text">E-mail address</span>
                         </label>
-                        <input id="emailAddress" type="email" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.emailAddress} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailAddressError}</span>
+                        <input id="email" type="email" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
+                               value={this.state.email} onChange={this.handleInputChange} />
+                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="pseudo">
@@ -253,6 +257,13 @@ class PartierForm extends React.Component {
                         </label>
                         <input id="refPhoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
                                value={this.state.refPhoneNumber} onChange={this.handleInputChange} />
+                    </div>
+                    <div className="form-control max-w-sm mx-auto">
+                        <label className="label" htmlFor="pseudo">
+                            <span className="label-text">Is Admin?</span>
+                        </label>
+                        <input id="isAdmin" type="checkbox" className="input placeholder-gray-500 text-gray-200"
+                               value={this.state.isAdmin} onChange={this.handleInputChange} />
                     </div>
                     <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="addressTown">

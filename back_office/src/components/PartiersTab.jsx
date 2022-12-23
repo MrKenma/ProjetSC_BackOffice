@@ -23,7 +23,7 @@ const PartiersTab = (props) => {
                     <tr key={partier.id}>
                         <td>{partier.firstname+" "+partier.lastname}</td>
                         <td>{partier.pseudo}</td>
-                        <td>{partier.emailaddress}</td>
+                        <td>{partier.email}</td>
                         <td>{partier.addresstown+" "+partier.addresszipcode}</td>
                         <td className="flex">
                         <InfosButton path={`/partierInfos/${partier.id}`} />

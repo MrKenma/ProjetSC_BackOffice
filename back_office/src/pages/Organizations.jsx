@@ -3,6 +3,7 @@ import OrganizationsTab from "../components/OrganizationsTab";
 import {getOrganizations} from "../components/API";
 import AddButton from "../components/AddButton";
 import FilterBox from "../components/FilterBox";
+import CheckBox from '../components/CheckBox';
 
 class Organizations extends React.Component {
 
@@ -68,6 +69,7 @@ class Organizations extends React.Component {
                 <div className="flex-none w-56 bg-neutral">
                     <AddButton path="/organizationForm/0" />
                     <FilterBox callback={(searchValue) => this.changeValuesToShow(searchValue)} />
+                    <CheckBox id="1" title="Is not verified yet?" name="isAdmin" checked={this.state.isAdmin} handleChange={this.handleChange}/>
                 </div>
                 <div className="flex-auto overflow-x-auto">
                     {Content}

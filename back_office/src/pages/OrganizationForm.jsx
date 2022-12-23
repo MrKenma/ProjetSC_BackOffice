@@ -55,7 +55,7 @@ class OrganizationForm extends React.Component {
                     loaded: true,
                     loading: false,
                     name: organization.name,
-                    email: organization.emailaddress,
+                    email: organization.email,
                     password: organization.password,
                     phoneNumber: organization.referencephonenumber,
                     responsibleName: organization.responsiblename,
@@ -129,7 +129,7 @@ class OrganizationForm extends React.Component {
         if (await this.validate()) {
             let organization = {
                 name: this.state.name,
-                emailAddress: this.state.email,
+                email: this.state.email,
                 password: this.state.password,
                 referencePhoneNumber: this.state.phoneNumber,
                 responsibleName: this.state.responsibleName,

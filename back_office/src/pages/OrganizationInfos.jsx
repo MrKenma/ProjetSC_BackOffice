@@ -57,7 +57,7 @@ class OrganizationInfos extends React.Component {
             Content = (
                 <div className="pb-4">
                     <div>Organization's name : {this.state.organization.name}</div>
-                    <div>Email address : {this.state.organization.emailaddress}</div>
+                    <div>Email address : {this.state.organization.email}</div>
                     <div>Reference phone number : {this.state.organization.referencephonenumber}</div>
                     <div>Responsible name : {this.state.organization.responsiblename}</div>
                     <div>Administrative proof : {this.state.organization.administrativeproof}</div>
