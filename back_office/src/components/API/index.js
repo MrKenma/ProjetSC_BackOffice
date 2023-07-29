@@ -1,6 +1,29 @@
 import axios from './http';
 
 /*-------------------------------------
+USERS
+-------------------------------------*/
+export async function userExists(id) {
+    try {
+        const res = await axios.get(`user/emailExists/${id}`);
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+export async function login(email, password) {
+    try {
+        const res = await axios.get(`user/login?email=${email}&password=${password}`);
+        return res.data;
+    } catch (error) {
+        //console.error(error);
+        return error.response.status;
+    }
+}
+
+/*-------------------------------------
 ORGANIZATIONS
 -------------------------------------*/
 export async function getOrganization(id) {
@@ -8,14 +31,14 @@ export async function getOrganization(id) {
         const res = await axios.get(`organization/getOrga/${id}`);
         return res.data;
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return [];
     }
 }
 
 export async function getOrganizations() {
     try {
-        const res = await axios.get('organization/all');
+        const res = await axios.get('organization');
         return res.data;
     } catch (error) {
         console.error(error);

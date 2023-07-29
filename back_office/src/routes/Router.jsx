@@ -12,7 +12,7 @@ import EventInfos from "../pages/EventInfos";
 import Partiers from "../pages/Partiers";
 import PartierForm from "../pages/PartierForm";
 import PartierInfos from "../pages/PartierInfos";
-import Login from "../components/Login";
+import Login from "../pages/Login";
 import Profile from "../pages/Profile";
 import Register from "../pages/Register";
 import AuthenticatedRoute from "../components/AuthenticatedRoute";

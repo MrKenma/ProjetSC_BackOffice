@@ -5,10 +5,10 @@ import { hasAuthenticated } from "./services/AuthAPI";
 import Auth from "./contexts/Auth";
 
 function App() {
-  const[isAuthenticated,setIsAuthenticated]=useState(hasAuthenticated());
+  const[isAuthenticated,setIsAuthenticated] = useState(hasAuthenticated());
   return (
     <div className="App h-screen">
-      <Auth.Provider value={{isAuthenticated,setIsAuthenticated}}>
+      <Auth.Provider value={{isAuthenticated, setIsAuthenticated}}>
         <Router />
       </Auth.Provider>
     </div>

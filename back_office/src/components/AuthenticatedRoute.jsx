@@ -2,7 +2,7 @@ import React from "react";
 import { useContext } from "react";
 import { Navigate, Route} from "react-router-dom";
 import Auth from "../contexts/Auth";
-import Login from "../components/Login";
+import Login from "../pages/Login";
 
 const AuthenticatedRoute=({path, element})=>{
     const{isAuthenticated} =useContext(Auth);

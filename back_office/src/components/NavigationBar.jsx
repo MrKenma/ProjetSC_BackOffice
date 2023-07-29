@@ -3,7 +3,7 @@ import {Link, NavLink} from 'react-router-dom';
 import Auth from '../contexts/Auth';
 
 function NavigationBar() {
-    const{isAuthenticated} =useContext(Auth);
+    const{isAuthenticated} = useContext(Auth);
 
     const handleLogout=()=>{
         console.log('On est déconnecté');
