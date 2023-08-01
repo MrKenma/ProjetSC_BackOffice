@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {Link, NavLink} from 'react-router-dom';
-import Auth from '../contexts/Auth';
 
 function NavigationBar() {
-    const{isAuthenticated} = useContext(Auth);
-
-    const handleLogout=()=>{
-        console.log('On est déconnecté');
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        window.location.reload();
     }
 
     return (
@@ -25,16 +23,16 @@ function NavigationBar() {
                 </div>
                 <div className="navbar-end">
                     <ul className="menu menu-horizontal">
-                        {(!isAuthenticated && (
+                        {(localStorage.getItem("token") === null && (
                             <>
-                        <li><Link to="/register" className="nav-link">Register</Link></li>
-                        <li><NavLink className="btn" to="/login">Log in</NavLink></li>
-                        </>)) 
-                        ||(
+                                <li><Link to="/register" className="nav-link">Register</Link></li>
+                                <li><NavLink className="btn" to="/login">Log in</NavLink></li>
+                            </>
+                        )) || (
                             <>
-                        <li><Link to="/profile" className="nav-link">Profile</Link></li>
-                        <li><button type="button" className="btn" onClick={handleLogout}>Disconnection</button></li>
-                        </>
+                                <li><Link to="/profile" className="nav-link">Profile</Link></li>
+                                <li><button type="button" className="btn" onClick={handleLogout}>Log out</button></li>
+                            </>
                         )}
                     </ul>
                 </div>

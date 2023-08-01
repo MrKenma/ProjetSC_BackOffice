@@ -1,6 +1,6 @@
 import React from 'react';
 import {login} from "../components/API";
-import {redirect, useNavigation} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 
 class Login extends React.Component {
     constructor(props) {
@@ -10,7 +10,8 @@ class Login extends React.Component {
             email: "",
             password: "",
             userError: "",
-            passwordError: ""
+            passwordError: "",
+            redirection: false
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -61,8 +62,8 @@ class Login extends React.Component {
             }
 
             if (res.user !== undefined) {
-                localStorage.setItem("token", res.token);
-                console.log('ok');
+                localStorage.setItem("token", res);
+                window.location.replace("/");
             }
         }
     }
@@ -89,7 +90,7 @@ class Login extends React.Component {
                     <button type="submit" className="btn my-4">Login</button>
                 </form>
             </div>
-        )
+        );
     }
 }
 

@@ -15,7 +15,6 @@ import PartierInfos from "../pages/PartierInfos";
 import Login from "../pages/Login";
 import Profile from "../pages/Profile";
 import Register from "../pages/Register";
-import AuthenticatedRoute from "../components/AuthenticatedRoute";
 
 export default function Router() {
     return (
@@ -32,9 +31,9 @@ export default function Router() {
                 <Route path="/partiers" element={<Partiers />} />
                 <Route path="/partierForm/:id" element={<PartierForm />} />
                 <Route path="/partierInfos/:id" element={<PartierInfos />} /> 
-                <Route path="/login" element={<Login/>}/>
-                <Route path="/register" element={<Register/>}/>
-                <Route exact path='/' element={<AuthenticatedRoute path="/profile" element={<Profile/>}/>}/>
+                <Route path="/login" element={<Login />}/>
+                <Route path="/register" element={<Register />}/>
+                <Route path='/profile' element={<Profile />}/>
             </Routes>
         </BrowserRouter>
     )
