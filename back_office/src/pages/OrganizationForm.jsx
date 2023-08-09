@@ -1,8 +1,15 @@
 import React from 'react';
 import {useParams} from 'react-router-dom';
-import {getOrganization, postOrganization, updateOrganization, organizationNameAlreadyExists} from "../components/API";
-import {validEmail, validPassword} from "../validation/RegExp";
+import {
+    getOrganization,
+    postOrganization,
+    updateOrganization,
+    organizationNameAlreadyExists,
+    deleteOrganization
+} from "../components/API";
+import {validEmail} from "../validation/RegExp";
 import FormModal from "../components/FormModal";
+import DeleteButton from "../components/DeleteButton";
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -17,16 +24,16 @@ class OrganizationForm extends React.Component {
             id: id,
             name: "",
             email: "",
-            password: "",
+            //password: "",
             phoneNumber: "",
             responsibleName: "",
-            administrativeProof: "",
+            //administrativeProof: "",
             nameError: "",
             emailError: "",
-            passwordError: "",
+            //passwordError: "",
             phoneNumberError: "",
             responsibleNameError: "",
-            adminProofError: "",
+            //adminProofError: "",
             loading: true,
             error: false,
             errorMessage: ""
@@ -51,15 +58,16 @@ class OrganizationForm extends React.Component {
         this.setState({loading: true, error: false}, async () => {
             try {
                 const organization = await getOrganization(this.state.id);
+
                 this.setState({
                     loaded: true,
                     loading: false,
-                    name: organization.name,
-                    email: organization.email,
-                    password: organization.password,
-                    phoneNumber: organization.referencephonenumber,
+                    name: organization.user.pseudo,
+                    email: organization.user.email,
+                    //password: organization.user.password,
+                    phoneNumber: organization.user.phonenumber,
                     responsibleName: organization.responsiblename,
-                    administrativeProof: organization.administrativeproof,
+                    //administrativeProof: organization.administrativeproof,
                 });
             } catch (error) {
                 this.setState({
@@ -85,10 +93,10 @@ class OrganizationForm extends React.Component {
     async validate() {
         let nameError = "";
         let emailError = "";
-        let passwordError = "";
+        //let passwordError = "";
         let phoneNumberError = "";
         let responsibleNameError = "";
-        let adminProofError = "";
+        //let adminProofError = "";
 
         const res = await organizationNameAlreadyExists(this.state.id, this.state.name);
         const nameExists = res.exists;
@@ -103,24 +111,28 @@ class OrganizationForm extends React.Component {
         } else if (!validEmail.test(this.state.email)) {
             emailError = "Wrong email adress format";
         }
+        /*
         if (!this.state.password) {
             passwordError = "Password field is required";
         } else if (!validPassword.test(this.state.password)) {
-            passwordError = "Your password must be minimum 8 characters long and contain a least a number and a capital letter";
+            passwordError = "The password must be minimum 8 characters long and contain a least a number and a capital letter";
         }
+         */
         if (!this.state.phoneNumber) {
             phoneNumberError = "Phone number field is required";
         }
         if (!this.state.responsibleName) {
             responsibleNameError = "Responsible name is required";
         }
+        /*
         if (!this.state.administrativeProof) {
             adminProofError = "Administrative proof is required";
         }
+         */
 
-        this.setState({nameError, emailError, passwordError, phoneNumberError, responsibleNameError, adminProofError});
+        this.setState({nameError, emailError, phoneNumberError, responsibleNameError});
 
-        return !(nameError || emailError || passwordError || phoneNumberError || responsibleNameError || adminProofError);
+        return !(nameError || emailError || phoneNumberError || responsibleNameError);
     }
 
     async submitOrganization(event) {
@@ -130,10 +142,10 @@ class OrganizationForm extends React.Component {
             let organization = {
                 name: this.state.name,
                 email: this.state.email,
-                password: this.state.password,
+                //password: this.state.password,
                 referencePhoneNumber: this.state.phoneNumber,
                 responsibleName: this.state.responsibleName,
-                administrativeProof: this.state.administrativeProof
+                //administrativeProof: this.state.administrativeProof
             }
 
             if (this.state.id === 0) {
@@ -191,14 +203,6 @@ class OrganizationForm extends React.Component {
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailError}</span>
                     </div>
                     <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="password">
-                            <span className="label-text">Password</span>
-                        </label>
-                        <input id="password" type="password" placeholder="********" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.password} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
                         <label className="label" htmlFor="phoneNumber">
                             <span className="label-text">Phone number</span>
                         </label>
@@ -214,15 +218,12 @@ class OrganizationForm extends React.Component {
                                value={this.state.responsibleName} onChange={this.handleInputChange}/>
                         <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.responsibleNameError}</span>
                     </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="administrativeProof">
-                            <span className="label-text">Administrative proof</span>
-                        </label>
-                        <input id="administrativeProof" type="text" placeholder="file name" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.administrativeProof} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.adminProofError}</span>
+                    <div className="join mt-4 mb-6">
+                        <div className="join-item mx-4">
+                            <button type="submit" className="btn">Save changes</button>
+                        </div>
+                        <DeleteButton id={this.state.id} deleteObject={deleteOrganization} path="/organizations" />
                     </div>
-                    <button type="submit" className="btn my-4">Save changes</button>
                 </form>
                 <FormModal modalMessage={this.state.modalMessage} id={this.state.id} path="/organizations" />
             </div>
@@ -237,5 +238,23 @@ export default withParams(OrganizationForm);
         <span className="label-text">Administrative proof</span>
     </label>
     <input id="proof" type="file" className="file-input" />
+</div>
+
+<div className="form-control max-w-sm mx-auto">
+    <label className="label" htmlFor="administrativeProof">
+        <span className="label-text">Administrative proof</span>
+    </label>
+    <input id="administrativeProof" type="text" placeholder="file name" className="input placeholder-gray-500 text-gray-200"
+           value={this.state.administrativeProof} onChange={this.handleInputChange}/>
+    <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.adminProofError}</span>
+</div>
+
+<div className="form-control max-w-sm mx-auto">
+    <label className="label" htmlFor="password">
+        <span className="label-text">Password</span>
+    </label>
+    <input id="password" type="password" placeholder="********" className="input placeholder-gray-500 text-gray-200"
+           value={this.state.password} onChange={this.handleInputChange}/>
+    <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
 </div>
 */

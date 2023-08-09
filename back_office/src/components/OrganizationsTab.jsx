@@ -18,13 +18,12 @@ const OrganizationsTab = (props) => {
             <tbody>
             {organizations.map(organization => {
                 return (
-                    <tr key={organization.id}>
-                        <td>{organization.email}</td>
-                        <td>{organization.name}</td>
+                    <tr key={organization.userid}>
+                        <td>{organization.user.email}</td>
+                        <td>{organization.user.pseudo}</td>
                         <td>{organization.responsiblename}</td>
                         <td className="flex">
-                            <InfosButton path={`/organizationInfos/${organization.id}`} />
-                            <ModifyButton path={`/organizationForm/${organization.id}`} />
+                            <ModifyButton path={`/organizationForm/${organization.userid}`} />
                         </td>
                     </tr>
                 );
@@ -35,3 +34,7 @@ const OrganizationsTab = (props) => {
 }
 
 export default OrganizationsTab;
+
+/*
+<InfosButton path={`/organizationInfos/${organization.userid}`} />
+ */

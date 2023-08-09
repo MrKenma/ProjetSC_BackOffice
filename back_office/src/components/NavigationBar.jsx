@@ -4,6 +4,8 @@ import {Link, NavLink} from 'react-router-dom';
 function NavigationBar() {
     const handleLogout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("isAdmin");
         window.location.reload();
     }
 
@@ -14,7 +16,7 @@ function NavigationBar() {
             </div>
             <div className="navbar bg-neutral text-white">
                 <div className="navbar-start">
-                    <ul className="menu menu-horizontal p-0">
+                    <ul className="menu menu-horizontal py-0">
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/organizations">Organizations</Link></li>
                         <li><Link to="/events">Events</Link></li>
@@ -22,19 +24,18 @@ function NavigationBar() {
                     </ul>
                 </div>
                 <div className="navbar-end">
-                    <ul className="menu menu-horizontal">
-                        {(localStorage.getItem("token") === null && (
-                            <>
-                                <li><Link to="/register" className="nav-link">Register</Link></li>
-                                <li><NavLink className="btn" to="/login">Log in</NavLink></li>
-                            </>
-                        )) || (
-                            <>
+                    {(localStorage.getItem("token") === null && (
+                        <>
+                            <NavLink className="btn" to="/login">Log in</NavLink>
+                        </>
+                    )) || (
+                        <>
+                            <ul className="menu">
                                 <li><Link to="/profile" className="nav-link">Profile</Link></li>
-                                <li><button type="button" className="btn" onClick={handleLogout}>Log out</button></li>
-                            </>
-                        )}
-                    </ul>
+                            </ul>
+                            <button type="button" className="btn" onClick={handleLogout}>Log out</button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

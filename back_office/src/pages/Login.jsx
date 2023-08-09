@@ -62,35 +62,43 @@ class Login extends React.Component {
             }
 
             if (res.user !== undefined) {
-                localStorage.setItem("token", res);
+                localStorage.setItem("token", res.token);
+                localStorage.setItem("userId", res.user.id);
+                localStorage.setItem("isAdmin", res.user.isadmin);
                 window.location.replace("/");
             }
         }
     }
 
     render() {
-        return (
-            <div className="flex justify-center items-center">
-                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitUser}>
-                    <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Connexion form</div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="email">
-                            <span className="label-text">Email address*</span>
-                        </label>
-                        <input id="email" type="text" placeholder="ex: besafe@gmail.com" className="input placeholder-gray-500 text-gray-200" onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="password">
-                            <span className="label-text">Password*</span>
-                        </label>
-                        <input id="password" type="password" placeholder="password" className="input placeholder-gray-500 text-gray-200" onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
-                    </div>
-                    <button type="submit" className="btn my-4">Login</button>
-                </form>
-            </div>
-        );
+        if (localStorage.getItem("token") !== null) {
+            return (
+                <Navigate to="/" />
+            );
+        } else {
+            return (
+                <div className="flex justify-center items-center">
+                    <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitUser}>
+                        <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Connexion form</div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="email">
+                                <span className="label-text">Email address*</span>
+                            </label>
+                            <input id="email" type="text" placeholder="ex: besafe@gmail.com" className="input placeholder-gray-500 text-gray-200" onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="password">
+                                <span className="label-text">Password*</span>
+                            </label>
+                            <input id="password" type="password" placeholder="password" className="input placeholder-gray-500 text-gray-200" onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
+                        </div>
+                        <button type="submit" className="btn my-4">Login</button>
+                    </form>
+                </div>
+            );
+        }
     }
 }
 

@@ -56,11 +56,10 @@ class OrganizationInfos extends React.Component {
         } else if (this.state.organization) {
             Content = (
                 <div className="pb-4">
-                    <div>Organization's name : {this.state.organization.name}</div>
-                    <div>Email address : {this.state.organization.email}</div>
-                    <div>Reference phone number : {this.state.organization.referencephonenumber}</div>
+                    <div>Organization's name : {this.state.organization.user.pseudo}</div>
+                    <div>Email address : {this.state.organization.user.email}</div>
+                    <div>Reference phone number : {this.state.organization.user.phonenumber}</div>
                     <div>Responsible name : {this.state.organization.responsiblename}</div>
-                    <div>Administrative proof : {this.state.organization.administrativeproof}</div>
                     <DeleteButton id={this.state.id} deleteObject={deleteOrganization} path="/organizations" />
                 </div>
             );

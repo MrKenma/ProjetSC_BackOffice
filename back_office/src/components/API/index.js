@@ -1,11 +1,36 @@
 import axios from './http';
 
 /*-------------------------------------
+FILES
+-------------------------------------*/
+export async function getProfilePicture(email) {
+    try {
+        const res = await axios.get(`/image/${email}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error.response.data);
+        return undefined;
+    }
+}
+
+/*-------------------------------------
 USERS
 -------------------------------------*/
-export async function userExists(id) {
+export async function userEmailExists(email) {
     try {
-        const res = await axios.get(`user/emailExists/${id}`);
+        const res = await axios.get(`user/emailExists/${email}`);
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+export async function userPseudoExists(pseudo) {
+    try {
+        const res = await axios.get(`user/pseudoExists/${pseudo}`);
         return res.data;
     } catch (error) {
         console.error(error);
@@ -18,27 +43,16 @@ export async function login(email, password) {
         const res = await axios.get(`user/login?email=${email}&password=${password}`);
         return res.data;
     } catch (error) {
-        //console.error(error);
+        console.error(error);
         return error.response.status;
     }
 }
 
-/*-------------------------------------
-ORGANIZATIONS
--------------------------------------*/
-export async function getOrganization(id) {
+export async function getUser(id) {
     try {
-        const res = await axios.get(`organization/getOrga/${id}`);
-        return res.data;
-    } catch (error) {
-        console.error(error)
-        return [];
-    }
-}
-
-export async function getOrganizations() {
-    try {
-        const res = await axios.get('organization');
+        const res = await axios.get(`user/${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
         return res.data;
     } catch (error) {
         console.error(error);
@@ -46,9 +60,52 @@ export async function getOrganizations() {
     }
 }
 
+export async function updateUser(user) {
+    try {
+        const res = await axios.patch("user", user, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return res.data;
+    } catch (error) {
+        throw new Error("A problem occurred when updating the user, try again later");
+    }
+}
+
+/*-------------------------------------
+ORGANIZATIONS
+-------------------------------------*/
+export async function getOrganizations() {
+    try {
+        const res = await axios.get('organization', {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+export async function getOrganization(id) {
+    try {
+        const res = await axios.get(`organization/${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error)
+        return [];
+    }
+}
+
 export async function postOrganization(organization) {
     try {
-        await axios.post('organization', organization);
+        await axios.post('organization', organization, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
     } catch (error) {
         throw new Error("A problem occurred when adding the organisation, try again later");
     }
@@ -152,7 +209,7 @@ export async function getEvent(id) {
 
 export async function getEvents() {
     try {
-        const res = await axios.get('event/all');
+        const res = await axios.get('1.0/event/all');
         return res.data;
     } catch (error) {
         console.error(error);
@@ -162,7 +219,7 @@ export async function getEvents() {
 
 export async function postEvent(event) {
     try {
-        await axios.post('event', event);
+        await axios.post('1.0/event', event);
     } catch (error) {
         throw new Error("Un problème est survenu lors de l'ajout de l'événement, réessayez plus tard");
     }
@@ -170,7 +227,7 @@ export async function postEvent(event) {
 
 export async function updateEvent(event) {
     try {
-        await axios.patch('event', event);
+        await axios.patch('1.0/event', event);
     } catch (error) {
         throw new Error("Un problème est survenu lors de la modification de l'événement, réessayez plus tard");
     }
@@ -178,7 +235,7 @@ export async function updateEvent(event) {
 
 export async function deleteEvent(id) {
     try {
-        await axios.delete(`event/${id}`);
+        await axios.delete(`1.0/event/${id}`);
     } catch (error) {
         throw new Error("Un problème est survenu lors de la suppression de l'événement, réessayez plus tard");
     }

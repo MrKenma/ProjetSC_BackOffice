@@ -58,7 +58,7 @@ class Organizations extends React.Component {
             Content = <p>Chargement en cours</p>
         } else if (this.state.error) {
             Content = <p>{this.state.errorMessage}</p>
-        } else if (this.state.organizations[0].id) {
+        } else if (this.state.organizations[0]) {
             Content = <OrganizationsTab
                 organizations={this.state.organizationsToShow}
             />
