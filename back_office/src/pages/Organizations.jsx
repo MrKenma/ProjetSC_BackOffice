@@ -3,7 +3,6 @@ import OrganizationsTab from "../components/OrganizationsTab";
 import {getOrganizations} from "../components/API";
 import AddButton from "../components/AddButton";
 import FilterBox from "../components/FilterBox";
-import {Navigate} from "react-router-dom";
 
 class Organizations extends React.Component {
 
@@ -16,10 +15,14 @@ class Organizations extends React.Component {
             error: false,
             errorMessage: ""
         };
+
+        this.sortByVerification = this.sortByVerification.bind(this);
     }
 
     componentDidMount() {
-        this.searchOrganizations();
+        if (sessionStorage.getItem("isAdmin")) {
+            this.searchOrganizations();
+        }
     }
 
     searchOrganizations() {
@@ -52,6 +55,15 @@ class Organizations extends React.Component {
         this.setState({organizationsToShow: afterFiltering});
     }
 
+    sortByVerification (event) {
+        if (event.target.checked) {
+            const organizationsToShow = this.state.organizations;
+            const afterSorting = organizationsToShow.sort((a, b) => b.isverified - a.isverified)
+
+            this.setState({organizationsToShow: afterSorting});
+        }
+    }
+
     render() {
         let Content;
 
@@ -65,9 +77,11 @@ class Organizations extends React.Component {
             />
         }
 
-        if (!localStorage.getItem("isAdmin")) {
+        if (!sessionStorage.getItem("isAdmin")) {
             return (
-                <Navigate to="/" />
+                <div className="flex justify-center items-center h-4/5">
+                    <div className="text-6xl">You must be admin to access this data</div>
+                </div>
             );
         } else {
             return (
@@ -75,6 +89,12 @@ class Organizations extends React.Component {
                     <div className="flex-none w-56 bg-neutral">
                         <AddButton path="/organizationForm/0" />
                         <FilterBox placeholder="Filter by responsible name" callback={(searchValue) => this.changeValuesToShow(searchValue)} />
+                        <div className="form-control ml-4 mb-4">
+                            <label className="label cursor-pointer">
+                                <span className="label-text">Order by verification</span>
+                                <input type="checkbox" className="checkbox mr-8" onChange={this.sortByVerification} />
+                            </label>
+                        </div>
                     </div>
                     <div className="flex-auto overflow-x-auto">
                         {Content}

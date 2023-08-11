@@ -1,5 +1,5 @@
 import React from 'react';
-import {Navigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {
     getPartier,
     updateUser,
@@ -12,7 +12,7 @@ import {
 import {validEmail, validPassword, validPhoneNumber, validPseudo} from "../validation/RegExp";
 import FormModal from "../components/FormModal";
 import {API_PROFILE_PICTURE} from "../components/API/http";
-import DefaultPicture from "../images/default_picture.png";
+import DefaultPicture from "../images/defaultPartierPicture.png";
 import DeleteButton from "../components/DeleteButton";
 
 function withParams(Component) {
@@ -58,16 +58,19 @@ class PartierForm extends React.Component {
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.submitPartier = this.submitPartier.bind(this);
+        this.deletePartier = this.deletePartier.bind(this);
     }
 
     componentDidMount() {
-        if (this.state.id !== 0) {
-            this.searchPartier();
-        } else {
-            this.setState({
-                loaded: true,
-                loading: false
-            });
+        if (sessionStorage.getItem("isAdmin")) {
+            if (this.state.id !== 0) {
+                this.searchPartier();
+            } else {
+                this.setState({
+                    loaded: true,
+                    loading: false
+                });
+            }
         }
     }
 
@@ -269,10 +272,25 @@ class PartierForm extends React.Component {
         }
     }
 
+    async deletePartier() {
+        await deletePartier(this.state.id);
+        window.location.replace("/partiers");
+    }
+
     render() {
-        if (!localStorage.getItem("isAdmin")) {
+        if (!sessionStorage.getItem("isAdmin")) {
             return (
-                <Navigate to="/" />
+                <div className="flex justify-center items-center h-4/5">
+                    <div className="text-6xl">You must be admin to access this data</div>
+                </div>
+            );
+        } else if (this.state.loading) {
+            return (
+                <p>Chargement en cours</p>
+            );
+        } else if (this.state.error) {
+            return (
+                <p>{this.state.errorMessage}</p>
             );
         } else {
             return (
@@ -376,7 +394,7 @@ class PartierForm extends React.Component {
                             <div className="join-item mx-4">
                                 <button type="submit" className="btn">Save changes</button>
                             </div>
-                            <DeleteButton id={this.state.id} deleteObject={deletePartier} path="/partiers" />
+                            <DeleteButton deleteObject={this.deletePartier} name="partier" />
                         </div>
                     </form>
                     <FormModal modalMessage={this.state.modalMessage} path="/partiers" />

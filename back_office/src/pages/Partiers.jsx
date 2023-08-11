@@ -4,8 +4,7 @@ import {getPartiers, getProfilePicture} from "../components/API";
 import AddButton from "../components/AddButton";
 import FilterBox from "../components/FilterBox";
 import {API_PROFILE_PICTURE} from "../components/API/http";
-import DefaultPicture from "../images/default_picture.png";
-import {Navigate} from "react-router-dom";
+import DefaultPicture from "../images/defaultPartierPicture.png";
 
 class Partiers extends React.Component {
 
@@ -21,7 +20,9 @@ class Partiers extends React.Component {
     }
 
     componentDidMount() {
-        this.searchPartiers();
+        if (sessionStorage.getItem("isAdmin")) {
+            this.searchPartiers();
+        }
     }
 
     searchPartiers() {
@@ -78,9 +79,11 @@ class Partiers extends React.Component {
             />
         }
 
-        if (!localStorage.getItem("isAdmin")) {
+        if (!sessionStorage.getItem("isAdmin")) {
             return (
-                <Navigate to="/" />
+                <div className="flex justify-center items-center h-4/5">
+                    <div className="text-6xl">You must be admin to access this data</div>
+                </div>
             );
         } else {
             return (

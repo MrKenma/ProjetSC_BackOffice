@@ -2,7 +2,7 @@ import React from 'react';
 import EventsTab from "../components/EventsTab";
 import {getEvents} from "../components/API";
 import AddButton from "../components/AddButton";
-import {Navigate} from "react-router-dom";
+import FilterBox from "../components/FilterBox";
 
 class Events extends React.Component {
 
@@ -18,7 +18,9 @@ class Events extends React.Component {
     }
 
     componentDidMount() {
-        this.searchEvents();
+        if (sessionStorage.getItem("isAdmin")) {
+            this.searchEvents();
+        }
     }
 
     searchEvents() {
@@ -45,7 +47,7 @@ class Events extends React.Component {
     changeValuesToShow (string) {
         const eventsToShow = this.state.events;
         const afterFiltering = eventsToShow.filter(event => {
-            return event.startdateandtime.includes(string);
+            return event.addresstown.includes(string);
         });
 
         this.setState({eventsToShow: afterFiltering});
@@ -64,15 +66,18 @@ class Events extends React.Component {
             />
         }
 
-        if (!localStorage.getItem("isAdmin")) {
+        if (!sessionStorage.getItem("isAdmin")) {
             return (
-                <Navigate to="/" />
+                <div className="flex justify-center items-center h-4/5">
+                    <div className="text-6xl">You must be admin to access this data</div>
+                </div>
             );
         } else {
             return (
                 <div className="flex">
                     <div className="flex-none w-56 bg-neutral">
-                        <AddButton path="/eventForm/0"/>
+                        <AddButton path={"/eventForm/0"} />
+                        <FilterBox placeholder="Filter by town" callback={(searchValue) => this.changeValuesToShow(searchValue)} />
                     </div>
                     <div className="flex-auto overflow-x-auto">
                         {Content}

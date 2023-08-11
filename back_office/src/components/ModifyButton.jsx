@@ -6,7 +6,7 @@ function InfosButton(props) {
     return (
         <div className="avatar">
             <div className="w-10 rounded-full">
-                <Link to={`${props.path}`}><img src={ModifyIcon} alt="modify" /></Link>
+                <Link to={props.path}><img src={ModifyIcon} alt="modify" /></Link>
             </div>
         </div>
     );

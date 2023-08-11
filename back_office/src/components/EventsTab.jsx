@@ -11,7 +11,8 @@ const EventsTab = (props) => {
             <tr>
                 <th>Name</th>
                 <th>Date and time</th>
-                <th>Address</th>
+                <th>Town</th>
+                <th>Street name and number</th>
                 <th>Modify</th>
             </tr>
             </thead>
@@ -21,7 +22,8 @@ const EventsTab = (props) => {
                     <tr key={event.id}>
                         <td>{event.name}</td>
                         <td>{Moment(event.startdatetime).format('DD/MM/yy hh:mm')}</td>
-                        <td>{event.addresstown + ", " + event.nameandnumstreet}</td>
+                        <td>{event.addresstown}</td>
+                        <td>{event.nameandnumstreet}</td>
                         <td className="flex">
                             <ModifyButton path={`/eventForm/${event.id}`} />
                         </td>

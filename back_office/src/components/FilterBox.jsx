@@ -21,7 +21,7 @@ class FilterBox extends React.Component {
             <input
                 type="text"
                 placeholder={this.state.placeholder}
-                className="input input-bordered w-5/6 mt-12 mb-12"
+                className="input input-bordered w-5/6 mt-8 mb-8"
                 onChange={
                     (action) => this.changeSearchValue(action)
                 }

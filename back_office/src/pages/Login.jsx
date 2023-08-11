@@ -62,16 +62,18 @@ class Login extends React.Component {
             }
 
             if (res.user !== undefined) {
-                localStorage.setItem("token", res.token);
-                localStorage.setItem("userId", res.user.id);
-                localStorage.setItem("isAdmin", res.user.isadmin);
+                sessionStorage.setItem("token", res.token);
+                sessionStorage.setItem("userId", res.user.id);
+                if (res.user.isadmin) {
+                    sessionStorage.setItem("isAdmin", res.user.isadmin);
+                }
                 window.location.replace("/");
             }
         }
     }
 
     render() {
-        if (localStorage.getItem("token") !== null) {
+        if (sessionStorage.getItem("token") !== null) {
             return (
                 <Navigate to="/" />
             );

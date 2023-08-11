@@ -1,11 +1,11 @@
 import React from 'react';
-import {Link, NavLink} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 function NavigationBar() {
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("isAdmin");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("userId");
+        sessionStorage.removeItem("isAdmin");
         window.location.reload();
     }
 
@@ -24,9 +24,9 @@ function NavigationBar() {
                     </ul>
                 </div>
                 <div className="navbar-end">
-                    {(localStorage.getItem("token") === null && (
+                    {(sessionStorage.getItem("token") === null && (
                         <>
-                            <NavLink className="btn" to="/login">Log in</NavLink>
+                            <Link className="btn" to="/login">Log in</Link>
                         </>
                     )) || (
                         <>

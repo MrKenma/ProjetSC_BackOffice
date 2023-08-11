@@ -1,16 +1,18 @@
 import React from 'react';
-import {Navigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {
     getOrganization,
     deleteOrganization,
     userPseudoExists,
     userEmailExists,
     register,
-    updateUser
+    updateUser, getProfilePicture
 } from "../components/API";
 import {validEmail, validPhoneNumber, validPassword, validPseudo} from "../validation/RegExp";
 import FormModal from "../components/FormModal";
 import DeleteButton from "../components/DeleteButton";
+import DefaultPicture from "../images/defaultOrgaPicture.png";
+import {API_PROFILE_PICTURE} from "../components/API/http";
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -42,21 +44,26 @@ class OrganizationForm extends React.Component {
             loading: true,
             error: false,
             errorMessage: "",
-            modalMessage: ""
+            modalMessage: "",
+            profilePictureUri: DefaultPicture
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
         this.submitOrganization = this.submitOrganization.bind(this);
+        this.deleteOrganization = this.deleteOrganization.bind(this);
     }
 
     componentDidMount() {
-        if (this.state.id !== 0) {
-            this.searchOrganization();
-        } else {
-            this.setState({
-                loaded: true,
-                loading: false
-            });
+        if (sessionStorage.getItem("isAdmin")) {
+            if (this.state.id !== 0) {
+                this.searchOrganization();
+            } else {
+                this.setState({
+                    loaded: true,
+                    loading: false
+                });
+            }
         }
     }
 
@@ -76,6 +83,14 @@ class OrganizationForm extends React.Component {
                     responsibleName: organization.responsiblename,
                     isVerified: organization.isverified
                 });
+
+                if (organization.user.hasuploadedprofilepicture) {
+                    const uuid = await getProfilePicture(organization.user.email);
+
+                    this.setState({
+                        profilePictureUri: `${API_PROFILE_PICTURE}/${uuid}.jpeg`
+                    });
+                }
             } catch (error) {
                 this.setState({
                     error: true,
@@ -95,6 +110,30 @@ class OrganizationForm extends React.Component {
         this.setState({
             [name]: value
         });
+    }
+
+    handleFileChange(event) {
+        const target = event.target;
+        const file = target.files[0];
+        const name = target.id;
+        const nameUri = name + "Uri";
+
+        this.setState({
+            [name]: file
+        });
+
+        const reader = new FileReader();
+
+        reader.addEventListener(
+            "load",
+            () => {
+                this.setState({[nameUri]: reader.result});
+            }
+        )
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
     }
 
     async validate() {
@@ -148,12 +187,17 @@ class OrganizationForm extends React.Component {
     async submitOrganization(event) {
         event.preventDefault();
 
+        this.setState({
+            phoneNumber: this.state.phoneNumber.replace(/[\\.\s/]+/g, ''),
+        });
+
         if (await this.validate()) {
             let user = {
                 pseudo: this.state.name,
                 email: this.state.email,
                 password: this.state.password,
                 phoneNumber: this.state.phoneNumber,
+                profilePicture: this.state.profilePicture,
                 organization: JSON.stringify({
                     responsibleName: this.state.responsibleName,
                     isVerified: this.state.isVerified
@@ -193,10 +237,25 @@ class OrganizationForm extends React.Component {
         }
     }
 
+    async deleteOrganization() {
+        await deleteOrganization(this.state.id);
+        window.location.replace("/organizations");
+    }
+
     render() {
-        if (!localStorage.getItem("isAdmin")) {
+        if (!sessionStorage.getItem("isAdmin")) {
             return (
-                <Navigate to="/" />
+                <div className="flex justify-center items-center h-4/5">
+                    <div className="text-6xl">You must be admin to access this data</div>
+                </div>
+            );
+        } else if (this.state.loading) {
+            return (
+                <p>Chargement en cours</p>
+            );
+        } else if (this.state.error) {
+            return (
+                <p>{this.state.errorMessage}</p>
             );
         } else {
             return (
@@ -247,6 +306,18 @@ class OrganizationForm extends React.Component {
                                 :
                                 ""
                         }
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="name">
+                                <span className="label-text">Profile picture</span>
+                            </label>
+                            <input type="file" id="profilePicture" accept="image/*" className="file-input"
+                                   onChange={this.handleFileChange}/>
+                        </div>
+                        <div className="avatar mt-4 p-2">
+                            <div className="rounded-full w-24">
+                                <img id="profilePicturePreview" alt="Profile" src={this.state.profilePictureUri} />
+                            </div>
+                        </div>
                         {this.state.id !== 0 ? <legend className="mt-8 text-lg">Change password</legend> : ""}
                         <div className="form-control max-w-sm mx-auto">
                             <label className="label" htmlFor="name">
@@ -268,7 +339,7 @@ class OrganizationForm extends React.Component {
                             <div className="join-item mx-4">
                                 <button type="submit" className="btn">Save changes</button>
                             </div>
-                            <DeleteButton id={this.state.id} deleteObject={deleteOrganization} path="/organizations" />
+                            <DeleteButton deleteObject={this.deleteOrganization} name="organization" />
                         </div>
                     </form>
                     <FormModal modalMessage={this.state.modalMessage} path="/organizations" />

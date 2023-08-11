@@ -1,15 +1,14 @@
 import React from 'react';
-import {Navigate} from "react-router-dom";
 import {getProfilePicture, getUser, updateUser, userEmailExists, userPseudoExists} from "../components/API";
 import FormModal from "../components/FormModal";
 import {validEmail, validPassword, validPhoneNumber, validPseudo} from "../validation/RegExp";
 import {API_PROFILE_PICTURE} from "../components/API/http";
-import DefaultPicture from "../images/default_picture.png";
+import DefaultPicture from "../images/defaultPartierPicture.png";
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
-        const id = localStorage.getItem("userId");
+        const id = sessionStorage.getItem("userId");
 
         this.state = {
             id: id,
@@ -38,13 +37,8 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-        if (this.state.id === undefined) {
+        if (sessionStorage.getItem("isAdmin")) {
             this.searchUser();
-        } else {
-            this.setState({
-                loaded: true,
-                loading: false
-            });
         }
     }
 
@@ -193,9 +187,19 @@ class Profile extends React.Component {
     }
 
     render() {
-        if (!localStorage.getItem("isAdmin")) {
+        if (!sessionStorage.getItem("isAdmin")) {
             return (
-                <Navigate to="/" />
+                <div className="flex justify-center items-center h-4/5">
+                    <div className="text-6xl">You must be admin to access this data</div>
+                </div>
+            );
+        } else if (this.state.loading) {
+            return (
+                <p>Chargement en cours</p>
+            );
+        } else if (this.state.error) {
+            return (
+                <p>{this.state.errorMessage}</p>
             );
         } else {
             return (

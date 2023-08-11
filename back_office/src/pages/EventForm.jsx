@@ -1,10 +1,10 @@
 import React from 'react';
-import {Navigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {
     getEvent,
     postEvent,
     updateEvent,
-    deleteEvent, eventNameExists, townExists, postTown
+    deleteEvent, eventNameExists, townExists, postTown, getOrganizations
 } from "../components/API";
 import FormModal from '../components/FormModal';
 import Moment from 'moment';
@@ -32,6 +32,7 @@ class EventForm extends React.Component {
             organizationId: "",
             addressTown: "", 
             addressZipCode: "",
+            organizations: [],
             nameError: "",
             descriptionError: "",
             nameAndNumStreetError: "",
@@ -49,17 +50,41 @@ class EventForm extends React.Component {
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.submitEvent = this.submitEvent.bind(this);
+        this.deleteEvent = this.deleteEvent.bind(this);
     }
 
     componentDidMount() {
-        if (this.state.id !== 0) {
-            this.searchEvent();
-        } else {
-            this.setState({
-                loaded: true,
-                loading: false
-            });
+        if (sessionStorage.getItem("isAdmin")) {
+            this.searchOrganizations();
+
+            if (this.state.id !== 0) {
+                this.searchEvent();
+            } else {
+                this.setState({
+                    loaded: true,
+                    loading: false
+                });
+            }
         }
+    }
+
+    searchOrganizations() {
+        this.setState({loading: true, error: false}, async () => {
+            try {
+                const organizations = await getOrganizations();
+
+                this.setState({
+                    organizations: organizations
+                });
+            } catch (error) {
+                this.setState({
+                    error: true,
+                    loading: false,
+                    loaded: true,
+                    errorMessage: error.message
+                });
+            }
+        });
     }
 
     searchEvent() {
@@ -79,7 +104,7 @@ class EventForm extends React.Component {
                     endDateTime: Moment(event.enddatetime).format('yyyy-MM-DDThh:mm'),
                     organizationId: event.organizationid, 
                     addressTown: event.addresstown, 
-                    addressZipCode: event.addresszipcode, 
+                    addressZipCode: event.addresszipcode
                 });
             } catch (error) {
                 this.setState({
@@ -141,7 +166,7 @@ class EventForm extends React.Component {
 
         if (!this.state.organizationId) {
             organizationIdError = "Organisation is required";
-        } // Else if organization not exists
+        }
 
         if (!this.state.addressTown) {
             addressTownError = "Town is required";
@@ -210,10 +235,25 @@ class EventForm extends React.Component {
         }
     }
 
+    async deleteEvent() {
+        await deleteEvent(this.state.id);
+        window.location.replace("/events");
+    }
+
     render() {
-        if (!localStorage.getItem("isAdmin")) {
+        if (!sessionStorage.getItem("isAdmin")) {
             return (
-                <Navigate to="/" />
+                <div className="flex justify-center items-center h-4/5">
+                    <div className="text-6xl">You must be admin to access this data</div>
+                </div>
+            );
+        } else if (this.state.loading) {
+            return (
+                <p>Chargement en cours</p>
+            );
+        } else if (this.state.error) {
+            return (
+                <p>{this.state.errorMessage}</p>
             );
         } else {
             return (
@@ -286,17 +326,21 @@ class EventForm extends React.Component {
                         </div>
                         <div className="form-control max-w-sm mx-auto">
                             <label className="label" htmlFor="organizationId">
-                                <span className="label-text">Organization id</span>
+                                <span className="label-text">Organization name</span>
                             </label>
-                            <input id="organizationId" type="text" placeholder="ex: 1" className="input placeholder-gray-500 text-gray-200"
-                                   value={this.state.organizationId} onChange={this.handleInputChange}/>
-                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.organizationIdError}</span>
+                            <select id="organizationId" className="select select-bordered w-full max-w-xs" onChange={this.handleInputChange}>
+                                {this.state.organizations.map(organization => {
+                                    return (
+                                        <option selected={organization.userid === this.state.organizationId} value={organization.userid}>{organization.user.pseudo}</option>
+                                    )
+                                })}
+                            </select>
                         </div>
                         <div className="join mt-8 mb-6">
                             <div className="join-item mx-4">
                                 <button type="submit" className="btn">Save changes</button>
                             </div>
-                            <DeleteButton id={this.state.id} deleteObject={deleteEvent} path="/events" />
+                            <DeleteButton deleteObject={this.deleteEvent} name="/event" />
                         </div>
                     </form>
                     <FormModal modalMessage={this.state.modalMessage} path="/events" />
