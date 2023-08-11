@@ -3,7 +3,7 @@ import OrganizationsTab from "../components/OrganizationsTab";
 import {getOrganizations} from "../components/API";
 import AddButton from "../components/AddButton";
 import FilterBox from "../components/FilterBox";
-import CheckBox from '../components/CheckBox';
+import {Navigate} from "react-router-dom";
 
 class Organizations extends React.Component {
 
@@ -48,6 +48,7 @@ class Organizations extends React.Component {
         const afterFiltering = organizationsToShow.filter(org => {
             return org.responsiblename.includes(string);
         });
+
         this.setState({organizationsToShow: afterFiltering});
     }
 
@@ -64,18 +65,23 @@ class Organizations extends React.Component {
             />
         }
 
-        return (
-            <div className="flex">
-                <div className="flex-none w-56 bg-neutral">
-                    <AddButton path="/organizationForm/0" />
-                    <FilterBox callback={(searchValue) => this.changeValuesToShow(searchValue)} />
-                    <CheckBox id="1" title="Is not verified yet?" name="isAdmin" checked={this.state.isAdmin} handleChange={this.handleChange}/>
+        if (!localStorage.getItem("isAdmin")) {
+            return (
+                <Navigate to="/" />
+            );
+        } else {
+            return (
+                <div className="flex">
+                    <div className="flex-none w-56 bg-neutral">
+                        <AddButton path="/organizationForm/0" />
+                        <FilterBox placeholder="Filter by responsible name" callback={(searchValue) => this.changeValuesToShow(searchValue)} />
+                    </div>
+                    <div className="flex-auto overflow-x-auto">
+                        {Content}
+                    </div>
                 </div>
-                <div className="flex-auto overflow-x-auto">
-                    {Content}
-                </div>
-            </div>
-        );
+            );
+        }
     }
 }
 

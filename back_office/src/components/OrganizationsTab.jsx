@@ -1,5 +1,4 @@
 import React from 'react';
-import InfosButton from "./InfosButton";
 import ModifyButton from "./ModifyButton";
 
 const OrganizationsTab = (props) => {
@@ -12,7 +11,8 @@ const OrganizationsTab = (props) => {
                 <th>Email Address</th>
                 <th>Name</th>
                 <th>Responsible</th>
-                <th>Actions</th>
+                <th>Verified</th>
+                <th>Modify</th>
             </tr>
             </thead>
             <tbody>
@@ -22,6 +22,7 @@ const OrganizationsTab = (props) => {
                         <td>{organization.user.email}</td>
                         <td>{organization.user.pseudo}</td>
                         <td>{organization.responsiblename}</td>
+                        <td>{organization.isverified ? "Yes" : "No"}</td>
                         <td className="flex">
                             <ModifyButton path={`/organizationForm/${organization.userid}`} />
                         </td>
@@ -34,7 +35,3 @@ const OrganizationsTab = (props) => {
 }
 
 export default OrganizationsTab;
-
-/*
-<InfosButton path={`/organizationInfos/${organization.userid}`} />
- */

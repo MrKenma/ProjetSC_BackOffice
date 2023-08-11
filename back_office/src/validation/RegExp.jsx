@@ -7,8 +7,13 @@ export const validPassword = new RegExp(
 );
 
 export const validPseudo = new RegExp(
-    '^[A-Za-zÀ-ÖØ-öø-ÿ0-9_]{3,16}$'
+    '^[A-Za-zÀ-ÖØ-öø-ÿ0-9_\\s]{3,16}$'
 );
+
 export const validPhoneNumber = new RegExp(
     '^[0-9]{9,10}$'
+);
+
+export const validZipCode = new RegExp(
+    '^[0-9]*$'
 );

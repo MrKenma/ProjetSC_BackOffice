@@ -1,10 +1,15 @@
 import React from 'react';
-import {useParams} from 'react-router-dom';
-import {getEvent} from "../components/API";
-import {postEvent} from "../components/API";
-import {updateEvent} from "../components/API";
+import {Navigate, useParams} from 'react-router-dom';
+import {
+    getEvent,
+    postEvent,
+    updateEvent,
+    deleteEvent, eventNameExists, townExists, postTown
+} from "../components/API";
 import FormModal from '../components/FormModal';
 import Moment from 'moment';
+import DeleteButton from "../components/DeleteButton";
+import {validZipCode} from "../validation/RegExp";
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -17,18 +22,29 @@ class EventForm extends React.Component {
 
         this.state = {
             id: id,
-            name: "", 
+            name: "",
+            nameInit: "",
             description: "", 
             nameAndNumStreet: "", 
             departingPoint: "", 
-            startDateAndTime: "", 
-            endDateAndTime: "", 
-            organizationId: "", 
+            startDateTime: "",
+            endDateTime: "",
+            organizationId: "",
             addressTown: "", 
-            addressZipCode: "", 
+            addressZipCode: "",
+            nameError: "",
+            descriptionError: "",
+            nameAndNumStreetError: "",
+            departingPointError: "",
+            startDateTimeError: "",
+            endDateTimeError: "",
+            organizationIdError: "",
+            addressTownError: "",
+            addressZipCodeError: "",
             loading: true,
             error: false,
-            errorMessage: ""
+            errorMessage: "",
+            modalMessage: ""
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -50,15 +66,17 @@ class EventForm extends React.Component {
         this.setState({loading: true, error: false}, async () => {
             try {
                 const event = await getEvent(this.state.id);
+
                 this.setState({
                     loaded: true,
                     loading: false,
-                    name: event.name, 
+                    name: event.name,
+                    nameInit: event.name,
                     description: event.description, 
                     nameAndNumStreet: event.nameandnumstreet, 
                     departingPoint: event.departingpoint, 
-                    startDateAndTime: Moment(event.startdateandtime).format('yyyy-MM-DDThh:mm'), 
-                    endDateAndTime: Moment(event.enddateandtime).format('yyyy-MM-DDThh:mm'), 
+                    startDateTime: Moment(event.startdatetime).format('yyyy-MM-DDThh:mm'),
+                    endDateTime: Moment(event.enddatetime).format('yyyy-MM-DDThh:mm'),
                     organizationId: event.organizationid, 
                     addressTown: event.addresstown, 
                     addressZipCode: event.addresszipcode, 
@@ -76,7 +94,7 @@ class EventForm extends React.Component {
 
     handleInputChange(action) {
         const target = action.target;
-        const value = target.value; // const value = target.type === 'checkbox' ? target.checked : target.value;
+        const value = target.value;
         const name = target.id;
 
         this.setState({
@@ -84,64 +102,76 @@ class EventForm extends React.Component {
         });
     }
 
-    validate() {
+    async validate() {
         let nameError= ""; 
         let descriptionError= "";  
         let nameAndNumStreetError= "";  
         let departingPointError= "";  
-        let startDateAndTimeError= "";  
-        let endDateAndTimeError= ""; 
+        let startDateTimeError= "";
+        let endDateTimeError= "";
         let organizationIdError= "";  
         let addressTownError= "";  
         let addressZipCodeError= ""; 
 
         if (!this.state.name) {
             nameError = "Name field is required";
-        } // else (existe déjà)
+        } else if (this.state.name !== this.state.nameInit && await eventNameExists(this.state.name)) {
+            nameError = "This name is already used";
+        }
+
         if (!this.state.description) {
             descriptionError = "Description field is required";
         }
+
         if (!this.state.nameAndNumStreet) {
             nameAndNumStreetError = "Name and num of street field is required";
         }
+
         if (!this.state.departingPoint) {
             departingPointError = "Departing point field is required";
         }
-        if (!this.state.startDateAndTime) {
-            startDateAndTimeError = "Start date and time field is required";
+
+        if (!this.state.startDateTime) {
+            startDateTimeError = "Start date and time field is required";
         }
-        if (!this.state.endDateAndTime) {
-            endDateAndTimeError = "End date and time is required";
+
+        if (!this.state.endDateTime) {
+            endDateTimeError = "End date and time is required";
         }
+
         if (!this.state.organizationId) {
             organizationIdError = "Organisation is required";
-        }
+        } // Else if organization not exists
+
         if (!this.state.addressTown) {
             addressTownError = "Town is required";
         }
+
         if (!this.state.addressZipCode) {
             addressZipCodeError = "Zip code is required";
+        } else if (!validZipCode.test(this.state.addressZipCode)) {
+            addressZipCodeError = "Invalid format";
         }
 
-        if (nameError || descriptionError || nameAndNumStreetError || departingPointError || startDateAndTimeError || endDateAndTimeError || organizationIdError || addressTownError || addressZipCodeError) {
-            this.setState({nameError, descriptionError, nameAndNumStreetError, departingPointError, startDateAndTimeError, endDateAndTimeError,organizationIdError,addressTownError,addressZipCodeError});
-            return false;
-        }
-
-        return true;
+        this.setState({ nameError, descriptionError, nameAndNumStreetError, departingPointError, startDateTimeError, endDateTimeError,organizationIdError,addressTownError,addressZipCodeError });
+        return !(nameError || descriptionError || nameAndNumStreetError || departingPointError || startDateTimeError || endDateTimeError || organizationIdError || addressTownError || addressZipCodeError);
     }
 
-    submitEvent(action) {
+    async submitEvent(action) {
         action.preventDefault();
 
-        if (this.validate()) {
+        if (await this.validate()) {
+            if (!(await townExists(this.state.addressTown, this.state.addressZipCode))) {
+                await postTown(this.state.addressTown, this.state.addressZipCode);
+            }
+
             let event = {
                 name: this.state.name, 
                 description: this.state.description, 
                 nameAndNumStreet: this.state.nameAndNumStreet, 
                 departingPoint: this.state.departingPoint, 
-                startDateAndTime: this.state.startDateAndTime, 
-                endDateAndTime: this.state.endDateAndTime, 
+                startDateTime: this.state.startDateTime,
+                endDateTime: this.state.endDateTime,
                 organizationId: this.state.organizationId, 
                 addressTown: this.state.addressTown, 
                 addressZipCode: this.state.addressZipCode
@@ -152,7 +182,7 @@ class EventForm extends React.Component {
                     try {
                         await postEvent(event);
                         this.setState({
-                            modalMessage: "The event has been added"
+                            modalMessage: "Event added"
                         });
                     } catch (error) {
                         this.setState({
@@ -166,7 +196,7 @@ class EventForm extends React.Component {
                         event.id = this.state.id;
                         await updateEvent(event);
                         this.setState({
-                            modalMessage: "The event has been modified"
+                            modalMessage: "Event modified"
                         });
                     } catch (error) {
                         this.setState({
@@ -181,87 +211,98 @@ class EventForm extends React.Component {
     }
 
     render() {
-        return (
-            <div className="flex justify-center items-center">
-                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitevent}>
-                    <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Event form</div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
-                            <span className="label-text">Event's name</span>
-                        </label>
-                        <input id="name" type="text" placeholder="ex: Rock Werchter 2022" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.name} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.nameError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="description">
-                            <span className="label-text">Description</span>
-                        </label>
-                        <input id="description" type="text" placeholder="description of the event" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.description} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.descriptionError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="nameAndNumStreet">
-                            <span className="label-text">Name and street number</span>
-                        </label>
-                        <input id="nameAndNumStreet" type="text" placeholder="ex; 18, rue des pommiers" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.nameAndNumStreet} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.nameAndNumStreetError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="addressTown">
-                            <span className="label-text">Town's name</span>
-                        </label>
-                        <input id="addressTown" type="text" placeholder="ex:Paris" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.addressTown} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressTownError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="addressZipCode">
-                            <span className="label-text">Zip code</span>
-                        </label>
-                        <input id="addressZipCode" type="text" placeholder="e: in front of the station" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.addressZipCode} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressZipCodeError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="departingPoint">
-                            <span className="label-text">Departing point</span>
-                        </label>
-                        <input id="departingPoint" type="text" placeholder="****" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.departingPoint} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.departingPointError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="startDateAndTime">
-                            <span className="label-text">Start date and time</span>
-                        </label>
-                        <input id="startDateAndTime" type="datetime-local" placeholder="**/**/**-**:**" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.startDateAndTime} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.startDateAndTimeError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="endDateAndTime">
-                            <span className="label-text">End date and time</span>
-                        </label>
-                        <input id="endDateAndTime" type="datetime-local" placeholder="**/**/**-**:**" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.endDateAndTime} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.endDateAndTimeError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="organizationId">
-                            <span className="label-text">Organization id</span>
-                        </label>
-                        <input id="organizationId" type="text" placeholder="id" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.organizationId} onChange={this.handleInputChange}/>
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.organizationIdError}</span>
-                    </div>
-                    <button type="submit" className="btn my-4">Save changes</button>
-                </form>
-                <FormModal modalMessage={this.state.modalMessage} path="/events" />
-            </div>
-        );
+        if (!localStorage.getItem("isAdmin")) {
+            return (
+                <Navigate to="/" />
+            );
+        } else {
+            return (
+                <div className="flex justify-center items-center">
+                    <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitEvent}>
+                        <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Event form</div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="name">
+                                <span className="label-text">Event's name</span>
+                            </label>
+                            <input id="name" type="text" placeholder="ex: Rock Werchter 2022" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.name} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.nameError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="description">
+                                <span className="label-text">Description</span>
+                            </label>
+                            <input id="description" type="text" placeholder="description of the event" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.description} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.descriptionError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="nameAndNumStreet">
+                                <span className="label-text">Name and street number</span>
+                            </label>
+                            <input id="nameAndNumStreet" type="text" placeholder="ex: 18, rue des pommiers" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.nameAndNumStreet} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.nameAndNumStreetError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="addressTown">
+                                <span className="label-text">Town's name</span>
+                            </label>
+                            <input id="addressTown" type="text" placeholder="ex: Namur" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.addressTown} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressTownError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="addressZipCode">
+                                <span className="label-text">Zip code</span>
+                            </label>
+                            <input id="addressZipCode" type="text" placeholder="ex: 5000" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.addressZipCode} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressZipCodeError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="departingPoint">
+                                <span className="label-text">Departing point</span>
+                            </label>
+                            <input id="departingPoint" type="text" placeholder="ex: In front of the station" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.departingPoint} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.departingPointError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="startDateAndTime">
+                                <span className="label-text">Start date and time</span>
+                            </label>
+                            <input id="startDateTime" type="datetime-local" placeholder="**/**/**-**:**" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.startDateTime} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.startDateTimeError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="endDateAndTime">
+                                <span className="label-text">End date and time</span>
+                            </label>
+                            <input id="endDateTime" type="datetime-local" placeholder="**/**/**-**:**" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.endDateTime} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.endDateTimeError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="organizationId">
+                                <span className="label-text">Organization id</span>
+                            </label>
+                            <input id="organizationId" type="text" placeholder="ex: 1" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.organizationId} onChange={this.handleInputChange}/>
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.organizationIdError}</span>
+                        </div>
+                        <div className="join mt-8 mb-6">
+                            <div className="join-item mx-4">
+                                <button type="submit" className="btn">Save changes</button>
+                            </div>
+                            <DeleteButton id={this.state.id} deleteObject={deleteEvent} path="/events" />
+                        </div>
+                    </form>
+                    <FormModal modalMessage={this.state.modalMessage} path="/events" />
+                </div>
+            );
+        }
     }
 }
 

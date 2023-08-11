@@ -2,7 +2,7 @@ import React from 'react';
 import EventsTab from "../components/EventsTab";
 import {getEvents} from "../components/API";
 import AddButton from "../components/AddButton";
-import FilterBox from "../components/FilterBox";
+import {Navigate} from "react-router-dom";
 
 class Events extends React.Component {
 
@@ -45,8 +45,9 @@ class Events extends React.Component {
     changeValuesToShow (string) {
         const eventsToShow = this.state.events;
         const afterFiltering = eventsToShow.filter(event => {
-            return event.organization.includes(string);
+            return event.startdateandtime.includes(string);
         });
+
         this.setState({eventsToShow: afterFiltering});
     }
 
@@ -57,23 +58,28 @@ class Events extends React.Component {
             Content = <p>Chargement en cours</p>
         } else if (this.state.error) {
             Content = <p>{this.state.errorMessage}</p>
-        } else if (this.state.events[0].id) {
+        } else if (this.state.events[0]) {
             Content = <EventsTab
                 events={this.state.eventsToShow}
             />
         }
 
-        return (
-            <div className="flex">
-                <div className="flex-none w-56 bg-neutral">
-                    <AddButton path="/eventForm/0"/>
-                    <FilterBox callback={(searchValue) => this.changeValuesToShow(searchValue)} />
+        if (!localStorage.getItem("isAdmin")) {
+            return (
+                <Navigate to="/" />
+            );
+        } else {
+            return (
+                <div className="flex">
+                    <div className="flex-none w-56 bg-neutral">
+                        <AddButton path="/eventForm/0"/>
+                    </div>
+                    <div className="flex-auto overflow-x-auto">
+                        {Content}
+                    </div>
                 </div>
-                <div className="flex-auto overflow-x-auto">
-                    {Content}
-                </div>
-            </div>
-        );
+            );
+        }
     }
 }
 

@@ -5,7 +5,8 @@ class FilterBox extends React.Component {
         super(props);
         this.state = {
             searchValue: "",
-            callback: props.callback
+            callback: props.callback,
+            placeholder: props.placeholder
         };
     }
 
@@ -19,7 +20,7 @@ class FilterBox extends React.Component {
         return (
             <input
                 type="text"
-                placeholder="Filter by responsible name"
+                placeholder={this.state.placeholder}
                 className="input input-bordered w-5/6 mt-12 mb-12"
                 onChange={
                     (action) => this.changeSearchValue(action)

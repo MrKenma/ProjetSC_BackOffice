@@ -1,8 +1,19 @@
 import React from 'react';
-import {useParams} from 'react-router-dom';
-import {getPartier, postPartier, updatePartier, emailAlreadyExists} from "../components/API";
-import {validEmail, validPassword} from "../validation/RegExp";
+import {Navigate, useParams} from 'react-router-dom';
+import {
+    getPartier,
+    updateUser,
+    getProfilePicture,
+    deletePartier,
+    userEmailExists,
+    userPseudoExists,
+    register
+} from "../components/API";
+import {validEmail, validPassword, validPhoneNumber, validPseudo} from "../validation/RegExp";
 import FormModal from "../components/FormModal";
+import {API_PROFILE_PICTURE} from "../components/API/http";
+import DefaultPicture from "../images/default_picture.png";
+import DeleteButton from "../components/DeleteButton";
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
@@ -15,23 +26,37 @@ class PartierForm extends React.Component {
 
         this.state = {
             id: id,
-            email: "", 
-            pseudo: "", 
-            password: "", 
+            email: "",
+            emailInit: "",
+            pseudo: "",
+            pseudoInit: "",
+            password: "",
+            confirmPassword: "",
             firstName: "", 
-            lastName: "", 
-            picture: "", 
+            lastName: "",
             phoneNumber: "", 
             refPhoneNumber: "",
-            isAdmin:"", 
             addressTown: "", 
             addressZipCode: "",
+            emailError: "",
+            pseudoError: "",
+            firstNameError: "",
+            lastNameError: "",
+            phoneNumberError: "",
+            refPhoneNumberError: "",
+            addressTownError: "",
+            addressZipCodeError: "",
+            passwordError: "",
+            confirmPasswordError: "",
             loading: true,
             error: false,
-            errorMessage: ""
+            errorMessage: "",
+            modalMessage: "",
+            profilePictureUri: DefaultPicture
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
         this.submitPartier = this.submitPartier.bind(this);
     }
 
@@ -50,21 +75,29 @@ class PartierForm extends React.Component {
         this.setState({loading: true, error: false}, async () => {
             try {
                 const partier = await getPartier(this.state.id);
+
                 this.setState({
                     loaded: true,
                     loading: false,
-                    email: partier.email, 
-                    pseudo: partier.pseudo, 
-                    password: partier.password, 
+                    email: partier.user.email,
+                    emailInit: partier.user.email,
+                    pseudo: partier.user.pseudo,
+                    pseudoInit: partier.user.pseudo,
                     firstName: partier.firstname, 
-                    lastName: partier.lastname, 
-                    picture: partier.picture, 
-                    phoneNumber: partier.phonenumber, 
-                    refPhoneNumber: partier.refphonenumber, 
-                    isAdmin:partier.isadmin,
+                    lastName: partier.lastname,
+                    phoneNumber: partier.user.phonenumber,
+                    refPhoneNumber: partier.refphonenumber,
                     addressTown: partier.addresstown, 
                     addressZipCode: partier.addresszipcode,
                 });
+
+                if (partier.user.hasuploadedprofilepicture) {
+                    const uuid = await getProfilePicture(partier.user.email);
+
+                    this.setState({
+                        profilePictureUri: `${API_PROFILE_PICTURE}/${uuid}.jpeg`
+                    });
+                }
             } catch (error) {
                 this.setState({
                     error: true,
@@ -86,85 +119,129 @@ class PartierForm extends React.Component {
         });
     }
 
+    handleFileChange(event) {
+        const target = event.target;
+        const file = target.files[0];
+        const name = target.id;
+        const nameUri = name + "Uri";
+
+        this.setState({
+            [name]: file
+        });
+
+        const reader = new FileReader();
+
+        reader.addEventListener(
+            "load",
+            () => {
+                this.setState({[nameUri]: reader.result});
+            }
+        )
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
     async validate() {
         let emailError = "";
         let pseudoError = "";
-        let passwordError = "";
         let firstNameError = ""; 
         let lastNameError = "";
         let phoneNumberError = ""; 
         let refPhoneNumberError = "";
-        let addressTownError = ""; 
+        let addressTownError = "";
         let addressZipCodeError = "";
-        
-        const res = await emailAlreadyExists(this.state.id, this.state.email);
-        const emailExists = res.exists;
+        let passwordError = "";
+        let confirmPasswordError = "";
+
 
         if (!this.state.email) {
-            emailError = "E-mail field is required";
-        }else if (emailExists) {
-            emailError = "This email address already exists";
-        }else if (!validEmail.test(this.state.email)) {
-            emailError = "Wrong email adress format";
+            emailError = "Email field is required";
+        } else if (!validEmail.test(this.state.email)) {
+            emailError = "Wrong email address format";
+        } else if (this.state.email !== this.state.emailInit && await userEmailExists(this.state.email)) {
+            emailError = "This email address is already used";
         }
+
         if (!this.state.pseudo) {
-            pseudoError = "Pseudo field is required";
+            pseudoError = "Nickname field is required";
+        } else if (!validPseudo.test(this.state.pseudo)) {
+            pseudoError = "Size must be between 3 and 16 characters. Numbers, letters and underscore are authorized";
+        } else if (this.state.pseudo !== this.state.pseudoInit && await userPseudoExists(this.state.pseudo)) {
+            pseudoError = "This pseudo is already used";
         }
-        if (!this.state.password) {
-            passwordError = "Password field is required";
-        } else if (!validPassword.test(this.state.password)) {
-            passwordError = "Your password must be minimum 8 characters long and contain a least a number and a capital letter";
-        }
+
         if (!this.state.firstName) {
             firstNameError = "First name field is required";
         }
+
         if (!this.state.lastName) {
-            lastNameError = "Last name is required";
+            lastNameError = "Last name field is required";
         }
+
         if (!this.state.phoneNumber) {
-            phoneNumberError = "Phone number is required";
+            phoneNumberError = "Phone number filed is required";
+        } else if (!validPhoneNumber.test(this.state.phoneNumber)) {
+            phoneNumberError = "Invalid phone number";
         }
-        if (!this.state.refPhoneNumber) {
-            refPhoneNumberError = "Reference phone number is required";
+
+        if (this.state.refPhoneNumber && !validPhoneNumber.test(this.state.refPhoneNumber)) {
+            refPhoneNumberError = "Invalid phone number";
         }
+
         if (!this.state.addressTown) {
-            addressTownError = "Townis required";
+            addressTownError = "Town's name field is required";
         }
+
         if (!this.state.addressZipCode) {
-            addressZipCodeError = "Zip code is required";
+            addressZipCodeError = "Zip code field is required";
         }
 
-        if (emailError || pseudoError || passwordError || firstNameError || lastNameError || phoneNumberError || refPhoneNumberError || addressTownError || addressZipCodeError) {
-            this.setState({emailError , pseudoError , passwordError , firstNameError , lastNameError, phoneNumberError , refPhoneNumberError , addressTownError , addressZipCodeError});
-            return false;
+        if (this.state.id === 0 && !this.state.password) {
+            passwordError = "Password field is required";
+        } else if (this.state.password && !validPassword.test(this.state.password)) {
+            passwordError = "Your password must be minimum 8 characters long and contain a least a number and a capital letter";
         }
 
-        return true;
+        if (this.state.password !== this.state.confirmPassword) {
+            confirmPasswordError = "Passwords do not match";
+        }
+
+        this.setState({emailError, pseudoError, firstNameError, lastNameError, phoneNumberError , refPhoneNumberError, addressTownError, addressZipCodeError, passwordError, confirmPasswordError})
+        return !(emailError || pseudoError || firstNameError || lastNameError || phoneNumberError || refPhoneNumberError || addressTownError || addressZipCodeError || passwordError || confirmPasswordError);
     }
 
     async submitPartier(event) {
         event.preventDefault();
 
+        this.setState({
+            phoneNumber: this.state.phoneNumber.replace(/[\\.\s/]+/g, ''),
+            refPhoneNumber: this.state.refPhoneNumber.replace(/[\\.\s/]+/g, '')
+        });
+
         if (await this.validate()) {
-            let partier = {
-                email: this.state.email, 
-                pseudo: this.state.pseudo, 
-                password: this.state.password, 
-                firstName: this.state.firstName, 
-                lastName: this.state.lastName, 
-                picture: this.state.picture, 
-                phoneNumber: this.state.phoneNumber,  
-                refPhoneNumber: this.state.refPhoneNumber,
-                isAdmin: this.state.isAdmin,
-                addressTown: this.state.addressTown, 
-                addressZipCode: this.state.addressZipCode,
+            let user = {
+                email: this.state.email,
+                password: this.state.password,
+                pseudo: this.state.pseudo,
+                phoneNumber: this.state.phoneNumber,
+                profilePicture: this.state.profilePicture,
+                partier: JSON.stringify({
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    refPhoneNumber: this.state.refPhoneNumber,
+                    addressTown: this.state.addressTown,
+                    addressZipCode: this.state.addressZipCode
+                })
             }
+
             if (this.state.id === 0) {
                 this.setState({}, async () => {
                     try {
-                        await postPartier(partier);
+                        await register(user);
                         this.setState({
-                            modalMessage: "The partier has been added"
+                            modalMessage: "Partier added"
                         });
                     } catch (error) {
                         this.setState({
@@ -175,10 +252,10 @@ class PartierForm extends React.Component {
             } else {
                 this.setState({}, async () => {
                     try {
-                        partier.id = this.state.id;
-                        await updatePartier(partier);
+                        user.id = this.state.id;
+                        await updateUser(user);
                         this.setState({
-                            modalMessage: "The organization has been modified"
+                            modalMessage: "Partier modified"
                         });
                     } catch (error) {
                         this.setState({
@@ -193,99 +270,119 @@ class PartierForm extends React.Component {
     }
 
     render() {
-        return (
-            <div className="flex justify-center items-center">
-                <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitPartier}>
-                    <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Partier form</div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="email">
-                            <span className="label-text">E-mail address</span>
-                        </label>
-                        <input id="email" type="email" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.email} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="pseudo">
-                            <span className="label-text">Login</span>
-                        </label>
-                        <input id="pseudo" type="text" placeholder="ex: TomDup" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.pseudo} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.pseudoError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="password">
-                            <span className="label-text">Password</span>
-                        </label>
-                        <input id="password" type="password" placeholder="********" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.password} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="firstName">
-                            <span className="label-text">Firstname</span>
-                        </label>
-                        <input id="firstName" type="text" placeholder="ex: Thomas" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.firstName} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.firstNameError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="lastName">
-                            <span className="label-text">Lastname</span>
-                        </label>
-                        <input id="lastName" type="text" placeholder="ex: Dupont" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.lastName} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.lastNameError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="name">
-                            <span className="label-text">Profile picture</span>
-                        </label>
-                        <input type="file" label="Choose file" name="file" value={this.handleFile} onChange={this.handleInputChange}/>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="phoneNumber">
-                            <span className="label-text">Phone number</span>
-                        </label>
-                        <input id="phoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.phoneNumber} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.phoneNumberError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="refPhoneNumber">
-                            <span className="label-text">Reference's phone number</span>
-                        </label>
-                        <input id="refPhoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.refPhoneNumber} onChange={this.handleInputChange} />
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="pseudo">
-                            <span className="label-text">Is Admin?</span>
-                        </label>
-                        <input id="isAdmin" type="checkbox" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.isAdmin} onChange={this.handleInputChange} />
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="addressTown">
-                            <span className="label-text">Town's name</span>
-                        </label>
-                        <input id="addressTown" type="text" placeholder="ex: Paris" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.addressTown} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressTownError}</span>
-                    </div>
-                    <div className="form-control max-w-sm mx-auto">
-                        <label className="label" htmlFor="addressZipCode">
-                            <span className="label-text">Zip code</span>
-                        </label>
-                        <input id="addressZipCode" type="text" placeholder="5002" className="input placeholder-gray-500 text-gray-200"
-                               value={this.state.addressZipCode} onChange={this.handleInputChange} />
-                        <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressZipCodeError}</span>
-                    </div>
-                    <button type="submit" className="btn my-4">Save changes</button>
-                </form>
-                <FormModal modalMessage={this.state.modalMessage} path="/partiers" />
-            </div>
-        );
+        if (!localStorage.getItem("isAdmin")) {
+            return (
+                <Navigate to="/" />
+            );
+        } else {
+            return (
+                <div className="flex justify-center items-center">
+                    <form className="bg-gray-700 w-full max-w-4xl my-4 rounded" onSubmit={this.submitPartier}>
+                        <div className="text-2xl mb-4 rounded-t bg-neutral pb-1">Partier form</div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="email">
+                                <span className="label-text">Email address*</span>
+                            </label>
+                            <input id="email" type="email" placeholder="ex: tom.beSafe@gmail.com" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.email} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.emailError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="pseudo">
+                                <span className="label-text">Nickname*</span>
+                            </label>
+                            <input id="pseudo" type="text" placeholder="ex: TomDup" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.pseudo} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.pseudoError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="firstName">
+                                <span className="label-text">Firstname*</span>
+                            </label>
+                            <input id="firstName" type="text" placeholder="ex: Thomas" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.firstName} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.firstNameError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="lastName">
+                                <span className="label-text">Lastname*</span>
+                            </label>
+                            <input id="lastName" type="text" placeholder="ex: Dupont" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.lastName} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.lastNameError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="name">
+                                <span className="label-text">Profile picture</span>
+                            </label>
+                            <input type="file" id="profilePicture" accept="image/*" className="file-input"
+                                   onChange={this.handleFileChange}/>
+                        </div>
+                        <div className="avatar mt-4 p-2">
+                            <div className="rounded-full w-24">
+                                <img id="profilePicturePreview" alt="Profile" src={this.state.profilePictureUri} />
+                            </div>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="phoneNumber">
+                                <span className="label-text">Phone number*</span>
+                            </label>
+                            <input id="phoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.phoneNumber} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.phoneNumberError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="refPhoneNumber">
+                                <span className="label-text">Emergency contact's phone number</span>
+                            </label>
+                            <input id="refPhoneNumber" type="text" placeholder="****/**.**.**" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.refPhoneNumber} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.refPhoneNumberError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="addressTown">
+                                <span className="label-text">Town's name*</span>
+                            </label>
+                            <input id="addressTown" type="text" placeholder="ex: Paris" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.addressTown} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressTownError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="addressZipCode">
+                                <span className="label-text">Zip code*</span>
+                            </label>
+                            <input id="addressZipCode" type="text" placeholder="5002" className="input placeholder-gray-500 text-gray-200"
+                                   value={this.state.addressZipCode} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.addressZipCodeError}</span>
+                        </div>
+                        {this.state.id !== 0 ? <legend className="mt-8 text-lg">Change password</legend> : ""}
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="name">
+                                <span className="label-text">{"Password" + (this.state.id === 0 ? "*" : "")}</span>
+                            </label>
+                            <input id="password" type="password" className="input placeholder-gray-500 text-gray-200"
+                                   placeholder="********" value={this.state.password} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.passwordError}</span>
+                        </div>
+                        <div className="form-control max-w-sm mx-auto">
+                            <label className="label" htmlFor="name">
+                                <span className="label-text">{"Confirm password" + (this.state.id === 0 ? "*" : "")}</span>
+                            </label>
+                            <input id="confirmPassword" type="password" className="input placeholder-gray-500 text-gray-200"
+                                   placeholder="********" value={this.state.confirmPassword} onChange={this.handleInputChange} />
+                            <span className="text-red-600 mr-auto ml-2 my-1 text-sm italic">{this.state.confirmPasswordError}</span>
+                        </div>
+                        <div className="join mt-8 mb-6">
+                            <div className="join-item mx-4">
+                                <button type="submit" className="btn">Save changes</button>
+                            </div>
+                            <DeleteButton id={this.state.id} deleteObject={deletePartier} path="/partiers" />
+                        </div>
+                    </form>
+                    <FormModal modalMessage={this.state.modalMessage} path="/partiers" />
+                </div>
+            );
+        }
     }
 }
 

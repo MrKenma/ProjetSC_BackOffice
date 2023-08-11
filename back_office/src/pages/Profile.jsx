@@ -4,6 +4,7 @@ import {getProfilePicture, getUser, updateUser, userEmailExists, userPseudoExist
 import FormModal from "../components/FormModal";
 import {validEmail, validPassword, validPhoneNumber, validPseudo} from "../validation/RegExp";
 import {API_PROFILE_PICTURE} from "../components/API/http";
+import DefaultPicture from "../images/default_picture.png";
 
 class Profile extends React.Component {
     constructor(props) {
@@ -28,7 +29,7 @@ class Profile extends React.Component {
             error: false,
             errorMessage: "",
             modalMessage: "",
-            profilePictureUri: "/default_picture.png"
+            profilePictureUri: DefaultPicture
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -37,7 +38,7 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-        if (this.state.id !== 0) {
+        if (this.state.id === undefined) {
             this.searchUser();
         } else {
             this.setState({
@@ -126,7 +127,7 @@ class Profile extends React.Component {
         if (!this.state.email) {
             emailError = "Email field is required";
         } else if (!validEmail.test(this.state.email)) {
-            emailError = "Wrong email format";
+            emailError = "Wrong email address format";
         } else if (this.state.email !== this.state.emailInit && await userEmailExists(this.state.email)) {
             emailError = "This email address is already used";
         }
@@ -171,6 +172,8 @@ class Profile extends React.Component {
                 phoneNumber: this.state.phoneNumber,
                 profilePicture: this.state.profilePicture
             }
+
+            console.log(user);
 
             this.setState({}, async () => {
                 try {
@@ -228,7 +231,7 @@ class Profile extends React.Component {
                             <label className="label" htmlFor="name">
                                 <span className="label-text">Profile picture</span>
                             </label>
-                            <input id="profilePicture" type="file" accept="image/*" className="file-input flex-none"
+                            <input id="profilePicture" type="file" accept="image/*" className="file-input"
                                    onChange={this.handleFileChange} />
                         </div>
                         <div className="avatar mt-4 p-2">

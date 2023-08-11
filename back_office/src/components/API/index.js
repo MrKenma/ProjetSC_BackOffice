@@ -5,7 +5,7 @@ FILES
 -------------------------------------*/
 export async function getProfilePicture(email) {
     try {
-        const res = await axios.get(`/image/${email}`, {
+        const res = await axios.get(`image/${email}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
         });
         return res.data;
@@ -60,6 +60,18 @@ export async function getUser(id) {
     }
 }
 
+export async function register(user) {
+    try {
+        await axios.post('user/register', user, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+    } catch (error) {
+        throw new Error("A problem occurred. Please, try again later");
+    }
+}
+
 export async function updateUser(user) {
     try {
         const res = await axios.patch("user", user, {
@@ -70,7 +82,7 @@ export async function updateUser(user) {
         });
         return res.data;
     } catch (error) {
-        throw new Error("A problem occurred when updating the user, try again later");
+        throw new Error("A problem occurred. Please, try again later");
     }
 }
 
@@ -101,57 +113,24 @@ export async function getOrganization(id) {
     }
 }
 
-export async function postOrganization(organization) {
+export async function deleteOrganization(id) {
     try {
-        await axios.post('organization', organization, {
+        await axios.delete(`organization/${id}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
         });
     } catch (error) {
-        throw new Error("A problem occurred when adding the organisation, try again later");
-    }
-}
-
-export async function updateOrganization(organization) {
-    try {
-        await axios.patch('organization', organization);
-    } catch (error) {
-        throw new Error("A problem occurred while editing the organisation, try again later");
-    }
-}
-
-export async function deleteOrganization(id) {
-    try {
-        await axios.delete(`organization/${id}`);
-    } catch (error) {
-        throw new Error("A problem occurred when deleting the organisation, try again later");
-    }
-}
-
-export async function organizationNameAlreadyExists(id, name) {
-    try {
-        const res = await axios.get(`organization/nameExists`, {params: {id, name}});
-        return res.data;
-    } catch (error) {
-        throw new Error("A problem has occurred, please try again later");
+        throw new Error("A problem occurred. Please, try again later");
     }
 }
 
 /*-------------------------------------
 PARTIERS
 -------------------------------------*/
-export async function getPartier(id) {
-    try {
-        const res = await axios.get(`partier/getPartier/${id}`);
-        return res.data;
-    } catch (error) {
-        console.log(error)
-        return [];
-    }
-}
-
 export async function getPartiers() {
     try {
-        const res = await axios.get('partier/all');
+        const res = await axios.get('partier/', {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
         return res.data;
     } catch (error) {
         console.error(error);
@@ -159,36 +138,25 @@ export async function getPartiers() {
     }
 }
 
-export async function postPartier(partier) {
+export async function getPartier(id) {
     try {
-        await axios.post('partier', partier);
+        const res = await axios.get(`partier/${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
+        return res.data;
     } catch (error) {
-        throw new Error("Un problème est survenu lors de l'ajout de l'utilisateur, réessayez plus tard");
-    }
-}
-
-export async function updatePartier(partier) {
-    try {
-        await axios.patch('partier', partier);
-    } catch (error) {
-        throw new Error("Un problème est survenu lors de la modification de l'utilisateur, réessayez plus tard");
+        console.error(error)
+        return [];
     }
 }
 
 export async function deletePartier(id) {
     try {
-        await axios.delete(`partier/${id}`);
+        await axios.delete(`partier/${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
     } catch (error) {
-        throw new Error("Un problème est survenu lors de la suppression de l'utilisateur, réessayez plus tard");
-    }
-}
-
-export async function emailAlreadyExists(id, email) {
-    try {
-        const res = await axios.get(`partier/emailExists`, {params: {id, email}});
-        return res.data;
-    } catch (error) {
-        throw new Error("Un problème est survenu, veuillez réessayer plus tard");
+        throw new Error("A problem occurred. Please, try again later");
     }
 }
 
@@ -196,20 +164,11 @@ export async function emailAlreadyExists(id, email) {
 /*-------------------------------------
 EVENTS
 -------------------------------------*/
-
-export async function getEvent(id) {
-    try {
-        const res = await axios.get(`event/${id}`);
-        return res.data;
-    } catch (error) {
-        console.log(error)
-        return [];
-    }
-}
-
 export async function getEvents() {
     try {
-        const res = await axios.get('1.0/event/all');
+        const res = await axios.get('event', {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
         return res.data;
     } catch (error) {
         console.error(error);
@@ -217,27 +176,81 @@ export async function getEvents() {
     }
 }
 
+export async function getEvent(id) {
+    try {
+        const res = await axios.get(`event/${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error)
+        return [];
+    }
+}
+
+export async function eventNameExists(name) {
+    try {
+        const res = await axios.get(`event/nameExists/${name}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
 export async function postEvent(event) {
     try {
-        await axios.post('1.0/event', event);
+        await axios.post('event', event, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
     } catch (error) {
-        throw new Error("Un problème est survenu lors de l'ajout de l'événement, réessayez plus tard");
+        throw new Error("A problem occurred. Please, try again later");
     }
 }
 
 export async function updateEvent(event) {
     try {
-        await axios.patch('1.0/event', event);
+        await axios.patch('event', event, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
     } catch (error) {
-        throw new Error("Un problème est survenu lors de la modification de l'événement, réessayez plus tard");
+        throw new Error("A problem occurred. Please, try again later");
     }
 }
 
 export async function deleteEvent(id) {
     try {
-        await axios.delete(`1.0/event/${id}`);
+        await axios.delete(`event/${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
     } catch (error) {
-        throw new Error("Un problème est survenu lors de la suppression de l'événement, réessayez plus tard");
+        throw new Error("A problem occurred. Please, try again later");
     }
 }
 
+/*-------------------------------------
+TOWN
+-------------------------------------*/
+export async function townExists(name, zipCode) {
+    try {
+        const res = await axios.get(`town/exists?name=${name}&zipCode=${zipCode}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+export async function postTown(name, zipCode) {
+    try {
+        await axios.post("town", {name, zipCode}, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}`}
+        })
+    } catch (error) {
+        throw new Error("A problem occurred. Please, try again later");
+    }
+}

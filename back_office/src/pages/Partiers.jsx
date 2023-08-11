@@ -1,8 +1,11 @@
 import React from 'react';
 import PartiersTab from "../components/PartiersTab";
-import {getPartiers} from "../components/API";
+import {getPartiers, getProfilePicture} from "../components/API";
 import AddButton from "../components/AddButton";
 import FilterBox from "../components/FilterBox";
+import {API_PROFILE_PICTURE} from "../components/API/http";
+import DefaultPicture from "../images/default_picture.png";
+import {Navigate} from "react-router-dom";
 
 class Partiers extends React.Component {
 
@@ -25,6 +28,17 @@ class Partiers extends React.Component {
         this.setState({loading: true, error: false}, async () => {
             try {
                 const partiers = await getPartiers();
+
+                for (const partier of partiers) {
+                    if (partier.user.hasuploadedprofilepicture) {
+                        const uuid = await getProfilePicture(partier.user.email);
+
+                        partier.profilePictureUri = `${API_PROFILE_PICTURE}/${uuid}.jpeg`;
+                    } else {
+                        partier.profilePictureUri = DefaultPicture;
+                    }
+                }
+
                 this.setState({
                     loaded: true,
                     loading: false,
@@ -44,9 +58,10 @@ class Partiers extends React.Component {
 
     changeValuesToShow (string) {
         const partiersToShow = this.state.partiers;
-        const afterFiltering = partiersToShow.filter(org => {
-            return org.responsiblename.includes(string);
+        const afterFiltering = partiersToShow.filter(part => {
+            return part.addresstown.includes(string);
         });
+
         this.setState({partiersToShow: afterFiltering});
     }
 
@@ -57,23 +72,29 @@ class Partiers extends React.Component {
             Content = <p>Chargement en cours</p>
         } else if (this.state.error) {
             Content = <p>{this.state.errorMessage}</p>
-        } else if (this.state.partiers[0].id) {
+        } else if (this.state.partiers[0]) {
             Content = <PartiersTab
                 partiers={this.state.partiersToShow}
             />
         }
 
-        return (
-            <div className="flex">
-                <div className="flex-none w-56 bg-neutral">
-                    <AddButton path="/partierForm/0"/>
-                    <FilterBox callback={(searchValue) => this.changeValuesToShow(searchValue)} />
+        if (!localStorage.getItem("isAdmin")) {
+            return (
+                <Navigate to="/" />
+            );
+        } else {
+            return (
+                <div className="flex">
+                    <div className="flex-none w-56 bg-neutral">
+                        <AddButton path="/partierForm/0"/>
+                        <FilterBox placeholder="Filter by town" callback={(searchValue) => this.changeValuesToShow(searchValue)} />
+                    </div>
+                    <div className="flex-auto overflow-x-auto">
+                        {Content}
+                    </div>
                 </div>
-                <div className="flex-auto overflow-x-auto">
-                    {Content}
-                </div>
-            </div>
-        );
+            );
+        }
     }
 }
 

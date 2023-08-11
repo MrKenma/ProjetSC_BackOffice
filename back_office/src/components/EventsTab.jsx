@@ -1,5 +1,4 @@
 import React from 'react';
-import InfosButton from "./InfosButton";
 import ModifyButton from "./ModifyButton";
 import Moment from "moment";
 
@@ -12,9 +11,8 @@ const EventsTab = (props) => {
             <tr>
                 <th>Name</th>
                 <th>Date and time</th>
-                <th>Adress</th>
-                <th>Organizer</th>
-                <th>Actions</th>
+                <th>Address</th>
+                <th>Modify</th>
             </tr>
             </thead>
             <tbody>
@@ -22,12 +20,10 @@ const EventsTab = (props) => {
                 return (
                     <tr key={event.id}>
                         <td>{event.name}</td>
-                        <td>{Moment(event.startdateandtime).format('DD/MM/yy hh:mm')}</td>
-                        <td>{event.addresstown+", "+event.nameandnumstreet}</td>
-                        <td>{event.organizationid}</td>
+                        <td>{Moment(event.startdatetime).format('DD/MM/yy hh:mm')}</td>
+                        <td>{event.addresstown + ", " + event.nameandnumstreet}</td>
                         <td className="flex">
-                        <InfosButton path={`/eventInfos/${event.id}`} />
-                        <ModifyButton path={`/eventForm/${event.id}`} />
+                            <ModifyButton path={`/eventForm/${event.id}`} />
                         </td>
                     </tr>
                 );

@@ -1,40 +1,45 @@
-
 import React from 'react';
-import InfosButton from "./InfosButton";
 import ModifyButton from "./ModifyButton";
-
 
 const PartiersTab = (props) => {
     const partiers = props.partiers;
-            return (
-                <table className="table w-full">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Login</th>
-                    <th>E-Mail</th>
-                    <th>Town</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {partiers.map(partier => {
+
+    return (
+        <table className="table w-full">
+            <thead>
+            <tr>
+                <th>Profile picture</th>
+                <th>Name</th>
+                <th>Nickname</th>
+                <th>Email address</th>
+                <th>Town</th>
+                <th>Modify</th>
+            </tr>
+            </thead>
+            <tbody>
+            {partiers.map(partier => {
                 return (
-                    <tr key={partier.id}>
-                        <td>{partier.firstname+" "+partier.lastname}</td>
-                        <td>{partier.pseudo}</td>
-                        <td>{partier.email}</td>
-                        <td>{partier.addresstown+" "+partier.addresszipcode}</td>
+                    <tr key={partier.userid}>
+                        <td>
+                            <div className="avatar">
+                                <div className="rounded-full w-10">
+                                    <img alt="Profile" src={partier.profilePictureUri} />
+                                </div>
+                            </div>
+                        </td>
+                        <td>{partier.firstname + " " + partier.lastname}</td>
+                        <td>{partier.user.pseudo}</td>
+                        <td>{partier.user.email}</td>
+                        <td>{partier.addresstown}</td>
                         <td className="flex">
-                        <InfosButton path={`/partierInfos/${partier.id}`} />
-                        <ModifyButton path={`/partierForm/${partier.id}`} />
+                            <ModifyButton path={`/partierForm/${partier.userid}`} />
                         </td>
                     </tr>
                 );
             })}
             </tbody>
-            </table>
-        )
+        </table>
+    )
 }
 
 export default PartiersTab;
